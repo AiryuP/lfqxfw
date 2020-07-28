@@ -17,12 +17,12 @@
             <div class="navBox">
                 <div class="navList" :class="{ 'active': isActive == '1' }" @click="toHome" >首页</div>
                 <div class="navList" :class="{ 'active': isActive == '2' }" @click="toForecast" >天气预报</div>
-                <div class="navList" :class="{ 'active': isActive == '3' }">实况格点数据</div>
+                <div class="navList" :class="{ 'active': isActive == '3' }" @click="toGridPoint">实况格点数据</div>
                 <div class="navList" :class="{ 'active': isActive == '4' }">环境气象</div>
                 <div class="navList" :class="{ 'active': isActive == '5' }">雷达云图</div>
                 <div class="navList" :class="{ 'active': isActive == '6' }">预警信息</div>
                 <div class="navList" :class="{ 'active': isActive == '7' }">交通气象</div>
-                <div class="navList" :class="{ 'active': isActive == '8' }" @click="toTerm" >气象术语</router-link></div>
+                <div class="navList" :class="{ 'active': isActive == '8' }" @click="toTerm" >气象术语</div>
             </div>
        </div>
        <div class="centerContent"></div>
@@ -70,6 +70,8 @@ export default {
             this.isActive = '1'
         }else if( str =='/weatherforecast' ){
             this.isActive = '2'
+        }else if( str =='/gridpoint' ){
+            this.isActive = '3'
         }else if( str == '/term' ){
             this.isActive = '8'
         }
@@ -87,6 +89,11 @@ export default {
     toForecast(){
         this.$router.push({
             path: '/weatherforecast',
+        })
+    },
+    toGridPoint(){
+        this.$router.push({
+            path: '/gridpoint',
         })
     },
   },

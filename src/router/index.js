@@ -29,6 +29,11 @@ Vue.use(VueRouter)
             path:"/weatherforecast",
             name:"weatherforecast",
             component: () => import(/* webpackChunkName: "weatherforecast" */ '../views/weatherforecast/index.vue')
+          },         
+          {
+            path:"/gridpoint",
+            name:"gridpoint",
+            component: () => import(/* webpackChunkName: "gridpoint" */ '../views/gridpoint/index.vue')
           },
         ]
       }
