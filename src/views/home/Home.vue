@@ -15,14 +15,14 @@
        </div>
        <div class="nav">
             <div class="navBox">
-                <div class="navList">首页</div>
-                <div class="navList">天气预报</div>
-                <div class="navList">实况格点数据</div>
-                <div class="navList">环境气象</div>
-                <div class="navList">雷达云图</div>
-                <div class="navList">预警信息</div>
-                <div class="navList">交通气象</div>
-                <div class="navList">气象术语</div>
+                <div class="navList" :class="{ 'active': isActive == '1' }" @click="toHome" >首页</div>
+                <div class="navList" :class="{ 'active': isActive == '2' }" @click="toForecast" >天气预报</div>
+                <div class="navList" :class="{ 'active': isActive == '3' }">实况格点数据</div>
+                <div class="navList" :class="{ 'active': isActive == '4' }">环境气象</div>
+                <div class="navList" :class="{ 'active': isActive == '5' }">雷达云图</div>
+                <div class="navList" :class="{ 'active': isActive == '6' }">预警信息</div>
+                <div class="navList" :class="{ 'active': isActive == '7' }">交通气象</div>
+                <div class="navList" :class="{ 'active': isActive == '8' }" @click="toTerm" >气象术语</router-link></div>
             </div>
        </div>
        <div class="centerContent"></div>
@@ -49,6 +49,7 @@ export default {
   data () {
     return {
         ewmShow: false,
+        isActive: '1',
     };
   },
 
@@ -57,9 +58,37 @@ export default {
 //监听属性 类似于data概念
   computed: {}, 
 //监控data中的数据变化
-  watch: {}, 
-  methods: {
+  watch: {
+    //   监听路由变化
+    '$route':'getPath'
 
+  }, 
+  methods: {
+    getPath(){
+        let str = this.$route.path;
+        if( str == '/home' ){
+            this.isActive = '1'
+        }else if( str =='/weatherforecast' ){
+            this.isActive = '2'
+        }else if( str == '/term' ){
+            this.isActive = '8'
+        }
+    },
+    toTerm(){
+        this.$router.push({
+            path: '/term',
+        })
+    },
+    toHome(){
+        this.$router.push({
+            path: '/',
+        })
+    },
+    toForecast(){
+        this.$router.push({
+            path: '/weatherforecast',
+        })
+    },
   },
 //生命周期 - 创建完成（可以访问当前this实例）
   created() {
@@ -67,7 +96,7 @@ export default {
   },
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-
+      this.getPath();
   }
 }
 </script>
@@ -154,6 +183,14 @@ export default {
                         background-color: #2e73b1;
                         cursor: pointer;
                     }
+                    span{
+                        // background-color: red;
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
+                .active{
+                    background-color: #2e73b1;
                 }
             }
         }
@@ -189,6 +226,9 @@ export default {
                 text-align: center;
             }
         }
+        
     }
+ 
+
 
 </style>

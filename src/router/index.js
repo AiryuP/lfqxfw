@@ -15,6 +15,23 @@ Vue.use(VueRouter)
         name:"Homes",
         component: () => import(/* webpackChunkName: "home" */ '../views/home/index.vue')
       },
+      {
+        path:"/secondary",
+        name:"secondary",
+        component: () => import(/* webpackChunkName: "secondary" */ '../views/secondary/index.vue'),
+        children:[
+          {
+            path:"/term",
+            name:"term",
+            component: () => import(/* webpackChunkName: "term" */ '../views/term/index.vue')
+          },          
+          {
+            path:"/weatherforecast",
+            name:"weatherforecast",
+            component: () => import(/* webpackChunkName: "weatherforecast" */ '../views/weatherforecast/index.vue')
+          },
+        ]
+      }
     ],
     redirect: '/home'
   },
