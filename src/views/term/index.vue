@@ -174,6 +174,7 @@ name: 'term',
         }
         .result{
             width: 100%;
+            min-height: 300px;
             .resultList{
                 width: 100%;
                 height: 32px;
@@ -189,8 +190,8 @@ name: 'term',
         }
         .fhaf{
             width: 100%;
-            height: 200px;
-            line-height: 200px;
+            height: 300px;
+            line-height: 300px;
             text-align: center;
             color: #000;
         }
