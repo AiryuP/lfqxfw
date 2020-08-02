@@ -34,6 +34,11 @@ Vue.use(VueRouter)
             path:"/gridpoint",
             name:"gridpoint",
             component: () => import(/* webpackChunkName: "gridpoint" */ '../views/gridpoint/index.vue')
+          },         
+          {
+            path:"/radar",
+            name:"radar",
+            component: () => import(/* webpackChunkName: "radar" */ '../views/radar/index.vue')
           },
         ]
       }
