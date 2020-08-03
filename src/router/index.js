@@ -39,6 +39,21 @@ Vue.use(VueRouter)
             path:"/radar",
             name:"radar",
             component: () => import(/* webpackChunkName: "radar" */ '../views/radar/index.vue')
+          },        
+          {
+            path:"/warning",
+            name:"warning",
+            component: () => import(/* webpackChunkName: "warning" */ '../views/warning/index.vue')
+          },        
+          {
+            path:"/ambient",
+            name:"ambient",
+            component: () => import(/* webpackChunkName: "ambient" */ '../views/ambient/index.vue')
+          },        
+          {
+            path:"/traffic",
+            name:"traffic",
+            component: () => import(/* webpackChunkName: "traffic" */ '../views/traffic/index.vue')
           },
         ]
       }

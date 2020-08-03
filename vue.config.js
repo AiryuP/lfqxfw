@@ -1,4 +1,11 @@
 module.exports = {
+    configureWebpack: {
+      externals: {
+        "BMap": "BMap",
+        // "AMap": "AMap",
+        // "$": 'jQuery'
+      },
+    },
     chainWebpack: config => {
         config
           .plugin('html')

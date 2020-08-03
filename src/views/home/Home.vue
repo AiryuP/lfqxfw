@@ -18,10 +18,10 @@
                 <div class="navList" :class="{ 'active': isActive == '1' }" @click="toHome" >首页</div>
                 <div class="navList" :class="{ 'active': isActive == '2' }" @click="toForecast" >天气预报</div>
                 <div class="navList" :class="{ 'active': isActive == '3' }" @click="toGridPoint" >实况格点数据</div>
-                <div class="navList" :class="{ 'active': isActive == '4' }">环境气象</div>
-                <div class="navList" :class="{ 'active': isActive == '5' }" @click="toRadar">雷达云图</div>
-                <div class="navList" :class="{ 'active': isActive == '6' }">预警信息</div>
-                <div class="navList" :class="{ 'active': isActive == '7' }">交通气象</div>
+                <div class="navList" :class="{ 'active': isActive == '4' }" @click="toAmbient" >环境气象</div>
+                <div class="navList" :class="{ 'active': isActive == '5' }" @click="toRadar" >雷达云图</div>
+                <div class="navList" :class="{ 'active': isActive == '6' }" @click="toWarning" >预警信息</div>
+                <div class="navList" :class="{ 'active': isActive == '7' }" @click="toTraffic">交通气象</div>
                 <div class="navList" :class="{ 'active': isActive == '8' }" @click="toTerm" >气象术语</div>
             </div>
        </div>
@@ -72,6 +72,14 @@ export default {
             this.isActive = '2'
         }else if( str =='/gridpoint' ){
             this.isActive = '3'
+        }else if( str == '/ambient'){ 
+            this.isActive = '4'
+        }else if( str =='/radar' ){
+            this.isActive = '5'
+        }else if( str =='/warning' ){
+            this.isActive = '6'
+        }else if( str =='/traffic' ){
+            this.isActive = '7'
         }else if( str == '/term' ){
             this.isActive = '8'
         }
@@ -101,6 +109,21 @@ export default {
             path: '/radar',
         })
     },
+    toWarning(){
+        this.$router.push({
+            path: '/warning',
+        })   
+    },
+    toAmbient(){
+        this.$router.push({
+            path: '/ambient',
+        })
+    },
+    toTraffic(){ 
+        this.$router.push({
+            path: '/traffic',
+        })
+    }
   },
 //生命周期 - 创建完成（可以访问当前this实例）
   created() {
