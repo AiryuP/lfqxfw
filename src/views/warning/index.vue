@@ -43,6 +43,34 @@
         </div>
 
     </div>
+
+    <el-dialog
+        title="预警信息"
+        :visible.sync="warningVisible"
+        width="60%"
+        :close-on-click-modal="false"
+        :before-close="handleClose">
+        <div class="warningTit">
+            秦皇岛2020年08月03日 16时03分发布高温橙色预警
+        </div>
+        <div class="warningCont">
+            <div class="pubTime">发布时间：	2020-08-03 16:03</div>
+            <div class="">发布单位：	秦皇岛</div>
+            <div>信号名称：	秦皇岛2020年08月03日 16时03分发布高温橙色预警</div>
+            <div>预报结论：	秦皇岛市气象台2020年08月03日16时01分发布高温橙色预警信号：受暖气团影响，预计明天白天，我市市辖区最高气温可达33～36℃，其它县区可达36～38℃，请防范。</div>
+        </div>
+
+
+        <span slot="footer" class="dialog-footer">
+            <!-- <el-button @click="dialogVisible = false">取 消</el-button> -->
+            <el-button type="primary" @click="warningVisible = false">关 闭</el-button>
+        </span>
+    </el-dialog>
+
+
+
+
+
   </div>
 </template>
 
@@ -70,7 +98,9 @@ name: 'warning',
                 lat: '115.201545',
                 lon: '40.614124',
                 address: "成都市锦江区通源街188号",
-                tel: "028-86712080"
+                tel: "028-86712080",
+                img: 'https://s1.ax1x.com/2020/08/03/aa2eY9.gif',
+                id: '1'
             },
             {
                 title: "名称：青羊区门诊部",
@@ -78,7 +108,9 @@ name: 'warning',
                 lat: '114.76001',
                 lon: '38.931948',
                 address: "成都市青羊区春晓路15号 ",
-                tel: "028-81067120"
+                tel: "028-81067120",
+                img: 'https://s1.ax1x.com/2020/08/03/aa2uS1.gif',
+                id: '2'
             },
             {
                 title: "名称：高新区门诊部",
@@ -86,9 +118,13 @@ name: 'warning',
                 lat: '117.020578',
                 lon: '39.957202',
                 address: "成都市高新区益州大道中段和天府二街交叉口复城国际T3-2号",
-                tel: "028-81067120"
+                tel: "028-81067120",
+                img: 'https://s1.ax1x.com/2020/08/03/aa2mWR.gif',
+                id: '3'
             }
-        ]
+        ],
+        warningVisible: false,
+        
     };
   },
 
@@ -139,29 +175,35 @@ name: 'warning',
     getProvinceWarningList(){
         let _that = this;
         // 假设已经获取
-        for(let i = 0;i<this.markerArr.length;i++){
-            let ipoint = this.markerArr[i].point;
-            let ilat = this.markerArr[i].lat;
-            let ilon = this.markerArr[i].lon;
+        for(let i = 0;i<_that.markerArr.length;i++){
+            let ipoint = _that.markerArr[i].point;
+            let ilat = _that.markerArr[i].lat;
+            let ilon = _that.markerArr[i].lon;
+            let myIcon = new BMap.Icon( _that.markerArr[i].img , new BMap.Size(63, 54));
             let point = new BMap.Point(ilat,ilon);
-            let marker = new BMap.Marker(point);
+            let marker = new BMap.Marker(point,{
+                icon: myIcon
+            });
+            marker.customData={oid: _that.markerArr[i].id  };
             bMap.addOverlay(marker);
             _that.addMarker( marker )
             marker.addEventListener("click",_that.getAttr);
         }
         
 
+
     },
     // 编写自定义函数,创建标注
     addMarker(point){
-        let _that = this;
-        console.log( point )
+        let _that = this; 
         let marker = new BMap.Marker(point);
         bMap.addOverlay(marker);
     },
-    getAttr(  ){
+    getAttr( a ){
 		// var p = marker.getPosition();       //获取marker的位置
-		alert("marker的位置是" );   
+        // alert("marker的位置是" );   
+        console.log( a.target.customData.oid )
+        this.warningVisible = true
 	}
 
 
@@ -243,7 +285,7 @@ name: 'warning',
                 position: absolute;
                 width: 300px;
                 height: 36px; 
-                z-index: 9999;
+                z-index: 99;
                 top: 6%;
                 left: calc( 50% - 150px );
                 overflow: hidden;
@@ -320,6 +362,25 @@ name: 'warning',
             }
         }
  
+    }
+    /deep/.el-dialog__wrapper{
+        .el-dialog__body{
+            padding: 10px 20px;
+            .warningTit{
+                width: 100%;
+                text-align: center;
+                font-size: 18px;
+                color: #000;
+                font-weight: 600;
+            }
+            .warningCont{
+                margin: 20px 0px;
+                >div{
+                    margin: 5px 0px;
+                    line-height: 20px;
+                }
+            }
+        }
     }
 
 }

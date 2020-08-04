@@ -48,12 +48,38 @@ Vue.use(VueRouter)
           {
             path:"/ambient",
             name:"ambient",
-            component: () => import(/* webpackChunkName: "ambient" */ '../views/ambient/index.vue')
+            component: () => import(/* webpackChunkName: "ambient" */ '../views/ambient/index.vue'),
+            children: [      
+              {
+                path:"/ambient/surface",
+                name:"surfaceAmbient",
+                component: () => import(/* webpackChunkName: "ambient" */ '../views/ambient/surface/index.vue')
+              },     
+              {
+                path:"/ambient/thread",
+                name:"threadAmbient",
+                component: () => import(/* webpackChunkName: "ambient" */ '../views/ambient/thread/index.vue')
+              }, 
+            ],
+            redirect: '/ambient/surface'
           },        
           {
             path:"/traffic",
             name:"traffic",
-            component: () => import(/* webpackChunkName: "traffic" */ '../views/traffic/index.vue')
+            component: () => import(/* webpackChunkName: "traffic" */ '../views/traffic/index.vue'),
+            children: [      
+              {
+                path:"/traffic/surface",
+                name:"surface",
+                component: () => import(/* webpackChunkName: "traffic" */ '../views/traffic/surface/index.vue')
+              },     
+              {
+                path:"/traffic/thread",
+                name:"thread",
+                component: () => import(/* webpackChunkName: "traffic" */ '../views/traffic/thread/index.vue')
+              }, 
+            ],
+            redirect: '/traffic/surface'
           },
         ]
       }

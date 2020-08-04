@@ -74,16 +74,24 @@ export default {
             this.isActive = '3'
         }else if( str == '/ambient'){ 
             this.isActive = '4'
+        }else if( str == '/ambient/surface'){ 
+            this.isActive = '4'
+        }else if( str == '/ambient/thread'){ 
+            this.isActive = '4'
         }else if( str =='/radar' ){
             this.isActive = '5'
         }else if( str =='/warning' ){
             this.isActive = '6'
         }else if( str =='/traffic' ){
             this.isActive = '7'
+        }else if( str =='/traffic/surface' ){
+            this.isActive = '7'
+        }else if( str =='/traffic/thread' ){
+            this.isActive = '7'
         }else if( str == '/term' ){
             this.isActive = '8'
         }
-    },
+    },  
     toTerm(){
         this.$router.push({
             path: '/term',
