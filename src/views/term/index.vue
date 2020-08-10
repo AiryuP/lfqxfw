@@ -15,23 +15,24 @@
             <div class="seachBox">
                 <el-input v-model="searchValue" placeholder="请输入关键词"></el-input>
             </div>
-            <div class="searchBtn">搜索</div>
+            <div class="searchBtn" @click="search">搜索</div>
             <div class="words">
                 推荐搜索：
-                <span>日界</span>
+                <span  v-for="item in recommendArr" :key="item.id" @click="toShowData(item.id)">{{ item.name }}</span>
+                <!-- <span>日界</span>
                 <span>空气质量指数</span>
                 <span>AQI</span>
                 <span>首要污染物</span>
                 <span>国家站</span>
                 <span>区域站</span>
-                <span>日照时数</span> 
+                <span>日照时数</span>  -->
             </div> 
         </div>
         <div class="result" v-if="!isShow">
-            <div class="resultList" v-for="item in itemArr" :key="item.id" @click="toShowData(item)">{{ item.name }}</div>
+            <div class="resultList" v-for="item in itemArr" :key="item.id" @click="toShowData(item.id)">{{ item.name }}</div>
         </div>
         <div class="fhaf" v-if="isShow">
-            暂无您搜索的数据
+            {{ defaultTip }}
         </div>
 
 
@@ -46,21 +47,10 @@ name: 'term',
   data () {
     return {
         searchValue: '',
-        isShow: false,
-
-        // 假消息
-        itemArr:[
-            {
-                id: '1',
-                name: '日界',
-                content: '气象日界是实行24小时制，以晚上20点为界，从晚上20时至第天早上08时的12个小时为晚上，从早上08时到晚上20时的12个小时为白天，一天是先晚上后白天为一天时间。凌晨：03-05时，早晨：05-08时，上午：08-11时，中午：11-13时，下午：13-17时，傍晚：17-20时，前半夜20-次日02时，后半夜：次日02-08时。'
-            },
-            {
-                id: '2',
-                name: '空气质量指数',
-                content: '空气污染指数（即AQI），就是根据环境空气质量标准和各项污染物对人体健康、生态、环境的影响，将常规监测的几种空气污染物浓度简化成为单一的概念性指数值形式，它将空气污染程度和空气质量状况分级表示，适合于表示城市的短期空气质量状况和变化趋势。针对单项污染物的还规定了空气质量分指数。参与空气质量评价的主要污染物为细颗粒物、可吸入颗粒物、二氧化硫、二氧化氮、臭氧、一氧化碳等六项。空气污染指数的取值范围定为0～500，其中0～50、51～100、101～200、201～300和大于300，分别对应国家空气质量标准中'
-            }
-        ]
+        isShow: true,
+        itemArr:[],
+        recommendArr:[],
+        defaultTip: '请输入关键字搜索！'
     };
   },
 
@@ -73,12 +63,62 @@ name: 'term',
   watch: {},
 
   methods: {
-    toShowData( item ){
-        this.$alert( item.content , item.name, {
-            confirmButtonText: '确定',
-            callback: action => {}
-        });
+    toShowData( id ){ 
+
+        let api = "/api/web/detail";
+        this.$axios.get(api,{
+            params:{
+                id: id
+            }
+        }).then((res)=>{
+            console.log( res )
+            if( res.data.status == 200){
+                let data = res.data.data.content.data;
+
+                this.$alert( data.content , data.name, {
+                    confirmButtonText: '确定',
+                    callback: action => {}
+                });
+            }
+        })
+
+ 
+    },
+    // 搜索功能
+    search(){ 
+        let api = '/api/web/keyword';
+        this.$axios.get(api,{
+            params:{
+                name: this.searchValue
+            }
+        }).then((res)=>{
+            console.log( res )
+            if( res.data.status == 200 ){
+                this.isShow = false;
+                this.defaultTip = '请输入关键字搜索！'
+                this.itemArr = res.data.data.content.data;
+                if( this.itemArr.length < 1 ){
+                    this.isShow = true;
+                    this.defaultTip = '暂无您输入的关键字信息！'
+                }
+            }
+        }).catch((res)=>{
+
+        })
+    },
+    recommend(){
+        let api = '/api/web/recommend';
+        this.$axios.get(api,{
+            
+        }).then((res)=>{
+            console.log( res );
+            if(res.data.status == 200){
+                let data = res.data.data.content.data;
+                this.recommendArr = data
+            }
+        })
     }
+
   },
 //生命周期 - 创建完成（可以访问当前this实例）
   created() {
@@ -86,7 +126,7 @@ name: 'term',
 },
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-
+      this.recommend()
 },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
