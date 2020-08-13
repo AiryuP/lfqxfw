@@ -9,7 +9,7 @@
             <span class="symbol">></span>
             <span class="c_title"><router-link tag="span" to="/traffic">交通气象</router-link></span>
             <span class="symbol" v-show="showCrumb == '2'" >></span>
-            <span class="c_title" v-show="showCrumb == '2'"> {{ trafficNext }} </span>
+            <span class="c_title" v-show="showCrumb == '2'"> {{ this.$store.getters.getRoadName  }}详情 </span>
         </div>
     </div>
     <div class="contents">
@@ -23,7 +23,7 @@ export default {
 name: 'traffic',
   data () {
     return {
-      trafficNext: '北京五环详情',
+      trafficNext: '',
       showCrumb: '1'
     };
   },
@@ -46,14 +46,14 @@ name: 'traffic',
       if( str =='/traffic/surface' ){
           this.showCrumb = '1'
       }else if(  str =='/traffic/thread'  ){
-          this.showCrumb = '2' 
+          this.showCrumb = '2'; 
       }
-    }
+    },
   },
 //生命周期 - 创建完成（可以访问当前this实例）
   created() {
 
-},
+  },
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     this.getPath();
@@ -91,7 +91,7 @@ name: 'traffic',
         .crumb{
             height: 50px;
             line-height: 50px;
-            color: blue;
+            color:#2750ba;
             span{
                 margin-right: 5px;
             }

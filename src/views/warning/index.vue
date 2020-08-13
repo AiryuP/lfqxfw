@@ -8,7 +8,7 @@
         <div class="crumb">
             <span class="c_title"><router-link tag="span" to="/">首页</router-link></span>
             <span class="symbol">></span>
-            <span class="c_title"><router-link tag="span" to="/gridpoint">预警信息</router-link></span>
+            <span class="c_title"><router-link tag="span" to="/warning">预警信息</router-link></span>
         </div>
     </div>
     <div class="contents">
@@ -83,7 +83,7 @@ name: 'warning',
         isWarningActive: '1',
         isW_LActive: '1',
         provinceNum: 0,
-        cityNum: 3,
+        cityNum: 0,
         dt_blue_img: '/static/warning/icon-dt-blue.png',
         dt_wit_img: '/static/warning/icon-dt-white.png',
         dt_img: '/static/warning/icon-dt-white.png',
@@ -124,6 +124,9 @@ name: 'warning',
             }
         ],
         warningVisible: false,
+        warNum: '1',
+
+        
         
     };
   },
@@ -150,11 +153,14 @@ name: 'warning',
     //  获取省内预警信息
     getProvinceWarningInfo(){
         this.isWarningActive = '1'
-
+        this.warNum = '1';
+        this.getWarningData();
     },
     // 获取市内预警信息
     getCityWarningInfo(){
         this.isWarningActive = '2'
+        this.warNum = '2'
+        this.getWarningData();
     },
     // 转到显示地图
     changeMap(){
@@ -172,23 +178,21 @@ name: 'warning',
         this.show_map_list = 'list';
     },
     // 获取省级预警数
-    getProvinceWarningList(){
-        let _that = this;
-        // 假设已经获取
-        for(let i = 0;i<_that.markerArr.length;i++){
-            let ipoint = _that.markerArr[i].point;
-            let ilat = _that.markerArr[i].lat;
-            let ilon = _that.markerArr[i].lon;
-            let myIcon = new BMap.Icon( _that.markerArr[i].img , new BMap.Size(63, 54));
-            let point = new BMap.Point(ilat,ilon);
-            let marker = new BMap.Marker(point,{
-                icon: myIcon
-            });
-            marker.customData={oid: _that.markerArr[i].id  };
+    getProvinceWarningList( data ){
+        let _that = this; 
+        for(let i = 0;i< data.length;i++){ 
+            let ilat = data[i].lat;
+            let ilon = data[i].long; 
+            let point = new BMap.Point(ilon,ilat);
+            let myIcon = new BMap.Icon( data[i].pic , new BMap.Size(50,43));
+            myIcon.setImageSize(new BMap.Size(50,43))
+            let marker = new BMap.Marker(point,{icon: myIcon}); 
+            marker.customData={oid: data[i].id  };
             bMap.addOverlay(marker);
             _that.addMarker( marker )
             marker.addEventListener("click",_that.getAttr);
         }
+
         
 
 
@@ -202,9 +206,44 @@ name: 'warning',
     getAttr( a ){
 		// var p = marker.getPosition();       //获取marker的位置
         // alert("marker的位置是" );   
-        console.log( a.target.customData.oid )
+        // console.log( a.target.customData.oid )
+
         this.warningVisible = true
-	}
+    },
+    // 获取预警
+    getWarningData(){
+        let api = '/api/web/warn';
+        this.$axios.get( api,{
+            num: this.warNum
+        } ).then( (res)=>{
+            console.log(res)
+            let data = res.data.data.content.data; 
+            let warnList = data.list
+            this.provinceNum = data.sheng
+            this.cityNum = data.shi 
+            let point =  new BMap.Point(data.longitude, data.latitude);
+            bMap.centerAndZoom( point,data.zoom) 
+            this.getProvinceWarningList( warnList )
+        } )
+    },
+
+    getOther(){
+        let api = '/api/web/warnList';
+        this.$axios.get( api,{
+
+        } ).then( (res)=>{
+            console.log( res )
+        } )
+    },
+
+
+
+
+
+    // 
+    handleClose(){
+
+    },
 
 
 
@@ -217,7 +256,8 @@ name: 'warning',
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
       this.initMap();
-      this.getProvinceWarningList();
+      this.getWarningData();
+      this.getOther()
   },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
@@ -252,7 +292,7 @@ name: 'warning',
         .crumb{
             height: 50px;
             line-height: 50px;
-            color: blue;
+            color:#2750ba;
             span{
                 margin-right: 5px;
             }

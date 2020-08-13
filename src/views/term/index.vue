@@ -7,7 +7,7 @@
         <div class="crumb">
             <span class="c_title"><router-link tag="span" to="/">首页</router-link></span>
             <span class="symbol">></span>
-            <span class="c_title"><router-link tag="span" to="/term">气象术语</router-link></span>
+            <span class="c_title"><router-link  tag="span" to="/term">气象术语</router-link></span>
         </div>
     </div>
     <div class="contents">
@@ -160,7 +160,7 @@ name: 'term',
         .crumb{
             height: 50px;
             line-height: 50px;
-            color: blue;
+            color:#2750ba;
             span{
                 margin-right: 5px;
             }

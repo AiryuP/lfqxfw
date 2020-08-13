@@ -219,7 +219,7 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
         .crumb{
             height: 50px;
             line-height: 50px;
-            color: blue;
+            color:#2750ba;
             span{
                 margin-right: 5px;
             }

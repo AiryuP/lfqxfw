@@ -159,7 +159,7 @@ name: 'weatherforecast',
         .crumb{
             height: 50px;
             line-height: 50px;
-            color: blue;
+            color:#2750ba;
             span{
                 margin-right: 5px;
             }

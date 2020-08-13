@@ -1,4 +1,4 @@
-<!-- 环境二级 -->
+<!-- 空气质量详情 -->
 <template>
   <div></div>
 </template>

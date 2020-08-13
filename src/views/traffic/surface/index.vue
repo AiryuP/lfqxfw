@@ -10,9 +10,10 @@
               <div class="content_lb">
                 <div class="njd_box" v-for="item in njdArr" >
                     <div class="njd_img_box">
-                        <img :src="require('../../../assets/linshi/'+item.imgUrl)" alt="">
+                        <img :src="item.url" alt="">
+                        <!-- require() -->
                     </div>
-                    <div class="njd_time_txt">{{ item.timeData }}</div>
+                    <div class="njd_time_txt">{{ item.time }}</div>
                 </div>
               </div>
           </div>
@@ -45,27 +46,9 @@ name: 'surface',
         lb_img: '/static/warning/icon-njd-blue.png',
         show_map_list: 'map',
         njdArr: [
-            {   
-                id: '1',
-                imgUrl:'njd1.png',
-                timeData: '14:00'
-            },
-            {
-                id: '2',
-                imgUrl:'njd2.png',
-                timeData: '13:00'
-            },
-            {
-                id: '3',
-                imgUrl:'njd3.png',
-                timeData: '12:00'
-            },
-            {
-                id: '4',
-                imgUrl:'njd4.png',
-                timeData: '11:00'
-            },
-        ]
+            
+        ],
+        stationName: ''
     };
   },
 
@@ -103,6 +86,7 @@ name: 'surface',
         this.dt_img = this.dt_blue_img;
         this.lb_img = this.lb_wit_img;
         this.show_map_list = 'list';
+        this.getVisibilityData();
     },
     // 展示点
     showPoints(datas) {
@@ -133,7 +117,54 @@ name: 'surface',
                 }, false);
             })();
         }
+    },
+    // 获取高速路图标
+    getAllH_SImg(){
+      let api = '/api/web/gaosu';
+      this.$axios.get( api,{
+
+      } ).then((res)=>{
+        let data = res.data.data.content.list;
+        this.show_gs_img(data) 
+      })
+    },
+    // 展示高速图标
+    show_gs_img( data ){
+        let _that = this;
+        for (let i = 0; i < data.length; i ++) {
+            let point = new BMap.Point( data[i].longitude,data[i].latitude);
+            let myIcon = new BMap.Icon( data[i].picUrl , new BMap.Size(50,48));
+            myIcon.setImageSize(new BMap.Size(50,48))
+            let marker = new BMap.Marker(point,{icon:myIcon});
+            marker.mycanshu = data[i].canshu;
+            bMap.addOverlay(marker); 
+            
+            marker.addEventListener("click",_that.attribute);
+        }
+    },
+    // 高速点击事件
+    attribute(e){
+        let p = e.target 
+        this.$router.push({
+            path: '/traffic/thread',
+            query: {
+                id: p.mycanshu
+            }
+        })
+    },
+    // 查询能见度
+    getVisibilityData(){
+        let api = '/api/web/nengjiandu';
+        this.$axios.get( api,{
+
+        } ).then((res)=>{
+            console.log(res)
+            let data = res.data.data.content.list;
+            this.njdArr = data
+            
+        })
     }
+    
 
   },
 //生命周期 - 创建完成（可以访问当前this实例）
@@ -142,7 +173,8 @@ name: 'surface',
   },
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-      this.initMap()
+    this.initMap();
+    this.getAllH_SImg();
   },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前

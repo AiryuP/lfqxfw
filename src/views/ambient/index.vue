@@ -7,7 +7,7 @@
         <div class="crumb">
             <span class="c_title"><router-link tag="span" to="/">首页</router-link></span>
             <span class="symbol">></span>
-            <span class="c_title"><router-link tag="span" to="/traffic">环境气象</router-link></span>
+            <span class="c_title"><router-link tag="span" to="/ambient">环境气象</router-link></span>
             <span class="symbol" v-show="showCrumb == '2'" >></span>
             <span class="c_title" v-show="showCrumb == '2'"> {{ ambientNext }} </span>
         </div>
@@ -91,7 +91,7 @@ name: 'ambient',
         .crumb{
             height: 50px;
             line-height: 50px;
-            color: blue;
+            color:#2750ba;
             span{
                 margin-right: 5px;
             }
