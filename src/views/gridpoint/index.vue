@@ -26,25 +26,25 @@
                     <div class="averageContent temBomCont" v-show="isTemActive == '1'" >
                         
                         <div class="imgBox">
-                            <img src="../../assets/linshi/TempAvg2020072908_54515.png" alt="">
+                            <img :src="imgUrl" alt="">
                         </div>
                         <div class="tabBox"> 
                             <template>
                                 <el-table
-                                :data="TempAvgTableData"
+                                :data="TempTableData"
                                 border
                                 :stretch='true'
                                 style="width: 100%">
                                 <el-table-column
-                                    prop="item"
+                                    prop="total"
                                     label="统计项目" >
                                 </el-table-column>
                                 <el-table-column
-                                    prop="name"
+                                    prop="stationName"
                                     label="站点名" >
                                 </el-table-column>
                                 <el-table-column
-                                    prop="num"
+                                    prop="tem"
                                     label="数值">
                                 </el-table-column>
                                 </el-table>
@@ -54,25 +54,25 @@
                     <div class="highContent temBomCont" v-show="isTemActive == '2'" >
 
                         <div class="imgBox">
-                            <img src="../../assets/linshi/Temp_Max2020072909_54515.png" alt="">
+                            <img :src="imgUrl" alt="">
                         </div>
                         <div class="tabBox"> 
                             <template>
                                 <el-table
-                                :data="TempHighTableData"
+                                :data="TempTableData"
                                 border
                                 :stretch='true'
                                 style="width: 100%">
                                 <el-table-column
-                                    prop="item"
+                                    prop="total"
                                     label="统计项目" >
                                 </el-table-column>
                                 <el-table-column
-                                    prop="name"
+                                    prop="stationName"
                                     label="站点名" >
                                 </el-table-column>
                                 <el-table-column
-                                    prop="num"
+                                    prop="tem"
                                     label="数值">
                                 </el-table-column>
                                 </el-table>
@@ -82,25 +82,25 @@
                     <div class="lowContent temBomCont" v-show="isTemActive == '3'" >
 
                         <div class="imgBox">
-                            <img src="../../assets/linshi/Temp_Min2020072908_54515.png" alt="">
+                            <img :src="imgUrl" alt="">
                         </div>
                         <div class="tabBox"> 
                             <template>
                                 <el-table
-                                :data="TempLowTableData"
+                                :data="TempTableData"
                                 border
                                 :stretch='true'
                                 style="width: 100%">
                                 <el-table-column
-                                    prop="item"
+                                    prop="total"
                                     label="统计项目" >
                                 </el-table-column>
                                 <el-table-column
-                                    prop="name"
+                                    prop="stationName"
                                     label="站点名" >
                                 </el-table-column>
                                 <el-table-column
-                                    prop="num"
+                                    prop="tem"
                                     label="数值">
                                 </el-table-column>
                                 </el-table>
@@ -160,6 +160,9 @@ components: {},
                     num: '21.9℃'
                 }
             ],
+            TempTableData: [],
+            upDataType: 'TempAvg',
+            imgUrl: '',
         };
     },
 //监听属性 类似于data概念
@@ -169,13 +172,34 @@ watch: {},
 //方法集合
 methods: {
     toAverage(){
-        this.isTemActive = "1"
+        this.isTemActive = "1";
+        this.upDataType = 'TempAvg';
+        this.getData();
     },
     toHigh(){
         this.isTemActive = "2"
+        this.upDataType = 'Temp_Max';
+        this.getData();
     },
     toLow(){
         this.isTemActive = "3"
+        this.upDataType = 'Temp_Min';
+        this.getData();
+    },
+    getData(){
+        let api = '/api/web/geDianData';
+        this.$axios.get( api,{
+            params:{
+                type: this.upDataType
+            }
+        } ).then( (res)=>{
+            console.log( res )
+            if(res.data.status == 200 ){
+                let data = res.data.data.content;
+                this.imgUrl = data.url;
+                this.TempTableData = data.list; 
+            }
+        } )
     }
 },
 //生命周期 - 创建完成（可以访问当前this实例）
@@ -184,7 +208,7 @@ created() {
 },
 //生命周期 - 挂载完成（可以访问DOM元素）
 mounted() {
-
+    this.getData();
 },
 beforeCreate() {}, //生命周期 - 创建之前
 beforeMount() {}, //生命周期 - 挂载之前
