@@ -16,13 +16,13 @@
             <div class="leftTitList" :class="{ 'active': isActive == '3' }" @click="getCountyData" >分县预报</div>
         </div>
         <div class="contentRight">
-            <div class="rightContent CityData" v-show="isActive == '1'" >
+            <div class="rightContent CityData" v-show="isActive == '1'" v-html="contentTxt" >
                 {{ contentTxt }}
             </div>
-            <div class="rightContent MetaphaseData" v-show="isActive == '2'">
+            <div class="rightContent MetaphaseData" v-show="isActive == '2'" v-html="contentTxt" >
                 {{ contentTxt }}
             </div>
-            <div class="rightContent CountyData" v-show="isActive == '3'">
+            <div class="rightContent CountyData" v-show="isActive == '3'" v-html="contentTxt" >
                 {{ contentTxt }}
             </div>
         </div>
