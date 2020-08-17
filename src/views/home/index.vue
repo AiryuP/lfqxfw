@@ -63,15 +63,23 @@
 
       </div>
       <div class="hd">
-          <div class="on">逐小时预报</div>
-          <div>七天预报</div>
+          <div class="on" @click="toHours" >逐小时预报</div>
+          <div @click="toDays" >七天预报</div>
       </div>
       <div class="slide">
-          <div class="slideContent">
-              <div class="hours">
+          <div class="slideContent1">
+              <!-- <div class="hours">
               <highcharts style="width:100%;height: 100%;background-color: rgba(0,0,0,0) " :options="chartOptions"  ></highcharts>
               </div>
-              <div class="days"></div>
+              <div class="days"></div> -->
+            <swiper ref="mySwiper" :options="swiperOptions">
+              <swiper-slide class="swiper-item">
+                <div class="hours">
+                  <highcharts style="width:100%;height: 100%;background-color: rgba(0,0,0,0) " :options="chartOptions"  ></highcharts>
+                </div>
+              </swiper-slide>
+              <swiper-slide class="swiper-item">Slide 2</swiper-slide> 
+            </swiper>
           </div>
       </div>
   </div>
@@ -79,6 +87,7 @@
 
 <script>
 import {Chart} from 'highcharts-vue'
+import { swiper, swiperSlide } from 'vue-awesome-swiper';
 export default {
 name: 'homes',
   data () {
@@ -236,6 +245,17 @@ name: 'homes',
               }, 
               data: [28,29,27,30,28,33,36,37,32,32,34,35,28,29,27,30,28,33,36,37,32,32,34,35],
           }] 
+      },
+      swiperOptions: {
+        // direction: 'vertical',
+    　　observer:true,//修改swiper自己或子元素时，自动初始化swiper 
+    　　observeParents:true,//修改swiper的父元素时，自动初始化swiper 
+        loop:true,
+        autoplay:{
+            disableOnInteraction: false,
+            delay: 2000,
+        },
+        // autoplayDisableOnInteraction: false,
       }
     };
   },
@@ -245,24 +265,46 @@ name: 'homes',
   },
 
 //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    swiper() {
+        return this.$refs.mySwiper.$swiper
+      }
+  },
 
 //监控data中的数据变化
   watch: {},
 
-  methods: {},
+  methods: {
+    toHours(){
+        this.swiper.slideTo(1, 500, false)
+    },
+    toDays(){
+        this.swiper.slideTo(2, 500, false)
+    },
+    // 获取所有城市
+    getAllCity(){
+       let api = '/api/web/city';
+       this.$axios.get(api,{
+
+       }).then((res)=>{
+         console.log(res)
+       })
+    }
+  },
 //生命周期 - 创建完成（可以访问当前this实例）
   created() {
 
 },
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-
+    this.getAllCity();
 },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
   beforeUpdate() {}, //生命周期 - 更新之前
-  updated() {}, //生命周期 - 更新之后
+  updated() {
+      // this.swiper.init();
+  }, //生命周期 - 更新之后
   beforeDestroy() {}, //生命周期 - 销毁之前
   destroyed() {}, //生命周期 - 销毁完成
   activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
@@ -439,8 +481,19 @@ name: 'homes',
           height: 230px; 
         }
         .days{
-          width: 1100px;
-          // color: #ff7a5217;
+          width: 1100px; 
+        }
+      }
+      .slideContent1{
+        width: 1100px; 
+        overflow: hidden;
+        margin: 0 auto;
+        .swiper-item{
+          width: 100%;
+          .hours{
+            width: 1100px;
+            height: 230px; 
+          }
         }
       }
     }

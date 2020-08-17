@@ -27,8 +27,23 @@
             </div>
         </div>
 
-        <div class="warningList" v-show="show_map_list == 'list'">
-
+        <div class="warningList" v-show="show_map_list == 'list'" >
+            <div class="warningBox" v-for="item in warningListArr"  @click="yjList.bind(item)" >
+                <div class="imgBox">
+                    <!-- v-show=" warningListArr.length > 0 " -->
+                    <img :src="item.icon" alt="">
+                </div>
+                <div class="warnTit">
+                    1111
+                    {{ item.area }}{{ item.publishTime }}发布{{ item.type }}{{ item.level }}预警
+                </div>
+                <div class="warnTime">
+                    {{ item.publishTime }}
+                </div> 
+            </div>
+            <!-- <div v-show=" warningListArr.length <= 0 ">
+                暂无数据
+            </div> -->
         </div>
 
         <div class="suspension">
@@ -51,13 +66,13 @@
         :close-on-click-modal="false"
         :before-close="handleClose">
         <div class="warningTit">
-            秦皇岛2020年08月03日 16时03分发布高温橙色预警
+           {{ warnDiogData.area }}{{ warnDiogData.publishTime }}发布{{ warnDiogData.type }}{{ warnDiogData.level }}预警
         </div>
         <div class="warningCont">
-            <div class="pubTime">发布时间：	2020-08-03 16:03</div>
-            <div class="">发布单位：	秦皇岛</div>
-            <div>信号名称：	秦皇岛2020年08月03日 16时03分发布高温橙色预警</div>
-            <div>预报结论：	秦皇岛市气象台2020年08月03日16时01分发布高温橙色预警信号：受暖气团影响，预计明天白天，我市市辖区最高气温可达33～36℃，其它县区可达36～38℃，请防范。</div>
+            <div class="pubTime">发布时间：	{{ warnDiogData.publishTime }}</div>
+            <div class="">发布单位：	{{ warnDiogData.area }}</div>
+            <div>信号名称：	{{ warnDiogData.area }}{{ warnDiogData.publishTime }}发布{{ warnDiogData.type }}{{ warnDiogData.level }}预警</div>
+            <div>预报结论：	{{ warnDiogData.content }}</div>
         </div>
 
 
@@ -125,6 +140,11 @@ name: 'warning',
         ],
         warningVisible: false,
         warNum: '1',
+        warnDiogData: [],
+        warningListArr: [{
+            icon: '',
+            area: 'hhahh',
+        }]
 
         
         
@@ -176,6 +196,7 @@ name: 'warning',
         this.dt_img = this.dt_blue_img;
         this.lb_img = this.lb_wit_img;
         this.show_map_list = 'list';
+        this.getOther()
     },
     // 获取省级预警数
     getProvinceWarningList( data ){
@@ -187,7 +208,7 @@ name: 'warning',
             let myIcon = new BMap.Icon( data[i].pic , new BMap.Size(50,43));
             myIcon.setImageSize(new BMap.Size(50,43))
             let marker = new BMap.Marker(point,{icon: myIcon}); 
-            marker.customData={oid: data[i].id  };
+            marker.customData= data[i] ;
             bMap.addOverlay(marker);
             _that.addMarker( marker )
             marker.addEventListener("click",_that.getAttr);
@@ -206,8 +227,8 @@ name: 'warning',
     getAttr( a ){
 		// var p = marker.getPosition();       //获取marker的位置
         // alert("marker的位置是" );   
-        // console.log( a.target.customData.oid )
-
+        console.log( a.target.customData )
+        this.warnDiogData = a.target.customData;
         this.warningVisible = true
     },
     // 获取预警
@@ -233,9 +254,15 @@ name: 'warning',
 
         } ).then( (res)=>{
             console.log( res )
+            if( res.data.status == 200 ){
+                // this.warningListArr = res.data.data.content.list;
+            }
         } )
     },
 
+    yjList(a){
+        console.log( a )
+    },
 
 
 
@@ -257,7 +284,6 @@ name: 'warning',
   mounted() {
       this.initMap();
       this.getWarningData();
-      this.getOther()
   },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
@@ -363,6 +389,36 @@ name: 'warning',
         }
         .warningList{
             width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            .warningBox{
+                width: 100%;
+                height: 60px;
+                background-color: rgba(165, 165, 165, 0.541);
+                margin-bottom: 10px;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                &:hover{
+                    cursor: pointer;
+                }
+                >div{
+                    margin: 0px 30px;
+                }
+                .imgBox{
+                    width: 50px;
+                    height: 50px;
+                    img{
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+                .warnTit{
+                    line-height: 50px;
+                    height: 50px;
+                    font-size: 20px; 
+                }
+            }
         }
         .suspension{
             position: absolute;

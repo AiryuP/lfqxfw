@@ -20,7 +20,7 @@
                 <div class="radarContent"> 
                     <div class="radarTitTxt"> 雷达图 <span class="tips" @click="openTips">提示</span> </div>
                     <div class="areaBox">  
-                        <el-select v-model="areaValue" style="width: 100%;color: #000"  placeholder="选择地区">
+                        <el-select v-model="areaValue"  @change="areaChange" style="width: 100%;color: #000"  placeholder="选择地区">
                             <el-option
                                 v-for="item in areaOptions"
                                 :key="item.value"
@@ -29,15 +29,13 @@
                                 </el-option>
                         </el-select>
                     </div>
-                    <div class="carouselTit">北京雷达图</div>
+                    <div class="carouselTit">{{aarea}}雷达图</div>
                     <div class="radarBox">
                         <div class="imgsBox">
-                            <div class="imgList">
-                                <img src="../../assets/linshi/radar1.png" alt="">
+                            <!-- v-for="item in radarArr" -->
+                            <div class="imgList" >
+                                <img :src="radarImg" alt="">
                             </div>
-                            <!-- <div class="imgList">
-                                <img src="../../assets/linshi/radar2.png" alt="">
-                            </div> -->
                         </div>
                         <div class="playSpeed">
                             <div class="playOrStop" @click="playImg">
@@ -56,18 +54,15 @@
                     <div class="cloudBox">
                         <div class="imgsBox">
                             <div class="imgList">
-                                <img src="../../assets/linshi/cloud1.jpg" alt="">
-                            </div>
-                            <!-- <div class="imgList">
-                                <img src="../../assets/linshi/radar2.png" alt="">
-                            </div> -->
+                                <img :src="cloudImg" alt="">
+                            </div> 
                         </div>
                         <div class="playSpeed">
-                            <div class="playOrStop" @click="playImg">
+                            <div class="playOrStop" @click="playCloudImg">
                                 <img :src='switchImg' alt="">
                             </div>
                             <div class="progressBar">
-                                <el-progress :show-text="false" :percentage="percentage" color="#409eff"></el-progress>
+                                <el-progress :show-text="false" :percentage="cloudPercentage" color="#409eff"></el-progress>
                             </div>
                         </div>
                     </div>
@@ -84,7 +79,7 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-
+var radarTimer,cloudTimer;
 export default {
 name: 'radar',
 //import引入的组件需要注入到对象中才能使用
@@ -95,31 +90,46 @@ components: {},
             isActive: '1',
             areaOptions: [
                 {
-                    value: '1',
+                    value: 'dx',
+                    label: '选择地区'
+                }, 
+                {
+                    value: 'sjz',
                     label: '石家庄'
                 }, {
-                    value: '2',
+                    value: 'zjk',
                     label: '张家口'
                 }, {
-                    value: '3',
+                    value: 'cd',
                     label: '承德'
                 }, {
-                    value: '4',
+                    value: 'qhd',
                     label: '秦皇岛'
                 }, {
-                    value: '5',
+                    value: 'cz',
                     label: '沧州'
                 },{
-                    value: '6',
+                    value: 'py',
                     label: '濮阳'
                 }
             ],
             areaValue: '',
             playStatus: '0',
+            cloudPlayStatus: '0',
             switchImg: '/static/radar/start.png',
             startImg: '/static/radar/start.png',
             stopImg: '/static/radar/stop.png',
-            percentage: 20, // 进度
+            percentage: 0, // 进度
+            cloudPercentage: 0,
+            raderDefCity: 'dx',
+            radarArr: [],
+            cioudArr: [],
+            radarImg: '',
+            cloudImg: '',
+            setp: 0,
+            cloudSetp: 0,
+            aarea: '北京'
+
         }
     },
     //监听属性 类似于data概念
@@ -133,6 +143,7 @@ components: {},
       },
       getCloud(){
         this.isActive = '2';
+        this.getCloudData();
       }, 
       openTips(){
         this.$alert('<p>雨、云、雪等降水粒子能够产生回波，并能较好地反应云雨区结构和变化，因此，通过气象雷达绘制的雷达图，已经成为我们对短时雷雨大风、冰雹等强对流天气进行监测预警的重要手段。</p><p> 雷达回波的强度，我们在雷达图上通过不同色谱表示。雷达回波从蓝色到紫色，降雨强度逐渐增强。<span style="color: red">一般来说，浅绿色有可能有降雨，深绿色一定有降雨，黄色红色区域的雨势往往非常大。</span>通过最近几张雷达图的动画观看，可以一目了然的看出雨带的移动和天气过程的走势，作为出行的参考。</p>', '提示', {
@@ -143,14 +154,125 @@ components: {},
         });
       },
       playImg(){
-          if( this.playStatus == '1' ){
-              this.playStatus = '0'
-              this.switchImg = this.startImg
-          }else if( this.playStatus == '0' ){
-              this.playStatus = '1'
-              this.switchImg = this.stopImg
+          if( this.cioudArr.length < 0 ){
+              return;
+          }else{
+            if( this.playStatus == '1' ){
+                this.playStatus = '0'
+                this.switchImg = this.startImg;
+                clearInterval( radarTimer )
+                radarTimer = null;
+            }else if( this.playStatus == '0' ){
+                this.playStatus = '1'
+                this.switchImg = this.stopImg;
+                this.myTimer();
+            } 
           }
-      }
+      },
+      playCloudImg(){
+          if( this.cioudArr.length < 0 ){
+              return;
+          }else{
+            if( this.cloudPlayStatus == '1' ){
+                this.cloudPlayStatus = '0'
+                this.switchImg = this.startImg;
+                clearInterval( cloudTimer )
+                cloudTimer = null;
+            }else if( this.cloudPlayStatus == '0' ){
+                this.cloudPlayStatus = '1'
+                this.switchImg = this.stopImg;
+                this.myCloudTimer();
+            }
+          }
+      },
+      // 获取雷达图
+      getRadarData(){
+          let api = '/api/web/radar';
+          this.$axios.get(api,{
+            params:{
+                type: this.raderDefCity
+            }
+          }).then((res)=>{
+            console.log( res )
+            if( res.data.status == 200){
+                this.radarArr = res.data.data.content.list; 
+                let ind = this.radarArr.length;
+                for(let i = 0;i<this.radarArr.length;i++){
+                    let iIndex = i+1;
+                    this.radarArr[i].indx = iIndex/ind*100;
+                }
+                this.radarImg = this.radarArr[0].img;
+            }
+          })
+      } ,
+      // 获取云图
+      getCloudData(){
+          let api = '/api/web/cloud';
+          this.$axios.get(api,{ }).then((res)=>{
+            console.log( res.data.data.content.list )
+            if( res.data.status == 200){
+                this.cioudArr = res.data.data.content.list; 
+                let ind = this.cioudArr.length;
+                for(let i = 0;i<this.cioudArr.length;i++){
+                    let iIndex = i+1;
+                    this.cioudArr[i].indx = iIndex/ind*100;
+                }
+                this.cloudImg = this.cioudArr[0].img;
+                console.log( this.cloudImg )
+            }
+          })
+      },
+      // 改变区域
+      areaChange( a ){
+          this.raderDefCity = a;
+          if( a == 'da' ){
+              this.aarea = '北京'; 
+          }else if(a == 'sjz'){
+              this.aarea = '石家庄';
+          }else if(a == 'zjk'){
+              this.aarea = '张家口';
+          }else if(a == 'cd'){
+              this.aarea = '承德';
+          }else if(a == 'qhd'){
+              this.aarea = '秦皇岛';
+          }else if(a == 'cz'){
+              this.aarea = '沧州';
+          }else if(a == 'py'){
+              this.aarea = "濮阳";
+          } 
+          this.getRadarData();
+      },
+
+      // 定时器
+      myTimer(){
+          let data = this.radarArr;
+          let _that = this; 
+          radarTimer = setInterval(() => { 
+            _that.radarImg = data[this.setp]['img'];
+            _that.percentage =  data[this.setp].indx; 
+            this.setp += 1;
+            if( this.setp >= data.length  ){
+                this.setp = 0
+            } 
+          }, 1000);
+      },
+      myCloudTimer(){
+          let data = this.cioudArr;
+          let _that = this; 
+          cloudTimer = setInterval(() => { 
+            _that.cloudImg = data[this.cloudSetp]['img'];
+            _that.cloudPercentage =  data[this.cloudSetp].indx; 
+            this.cloudSetp += 1;
+            if( this.cloudSetp >= data.length  ){
+                this.cloudSetp = 0
+            } 
+          }, 1000);
+      },
+
+
+
+
+
     },
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
@@ -158,13 +280,17 @@ components: {},
     },
     //生命周期 - 挂载完成（可以访问DOM元素）
     mounted() {
-
+        this.getRadarData();
+        this.getCloudData();
     },
     beforeCreate() {}, //生命周期 - 创建之前
     beforeMount() {}, //生命周期 - 挂载之前
     beforeUpdate() {}, //生命周期 - 更新之前
     updated() {}, //生命周期 - 更新之后
-    beforeDestroy() {}, //生命周期 - 销毁之前
+    beforeDestroy() {
+         clearInterval( radarTimer )
+         clearInterval( cloudTimer )
+    }, //生命周期 - 销毁之前
     destroyed() {}, //生命周期 - 销毁完成
     activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 }
@@ -320,12 +446,15 @@ components: {},
                         box-sizing: border-box;
                         .imgsBox{
                             width: 700px;
+                            height: 525px;
                             margin: 0 auto;
                             border: 6px solid #193759;
                             border-radius: 6px;
                             overflow: hidden;
+                            position: relative;
                             .imgList{
                                 width: 100%;
+                                // position: absolute;
                                 img{
                                     width: 100%;
                                 }
