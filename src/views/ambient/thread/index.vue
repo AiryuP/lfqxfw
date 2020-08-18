@@ -70,6 +70,7 @@ name: 'threadAmbient',
         if(res.data.status == 200){
           let data = res.data.data.content;
           this.allData = data;
+          console.log(  this.allData )
         }
       } )
     }
