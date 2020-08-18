@@ -184,18 +184,21 @@ name: 'surfaceAmbient',
     // 获取地图数据
     getMapData(){
       let api = '/api/web/huanjing';
+      let _that = this;
       this.$axios.get( api,{
 
       } ).then((res)=>{
-        console.log(res)
+        // console.log(res)
         let data = res.data.data.content.list;
 
         for( let i = 0;i<data.length;i++  ){
             let point = new BMap.Point( data[i].clong,data[i].clat );
             let text = data[i].aqiVal;
+            let aid = data[i].stationNum; 
             let tipColor = data[i].color;
-            this.selfOverfay(point ,text,tipColor )
+            this.selfOverfay(point ,text,tipColor, aid )
             bMap.addOverlay(myCompOverlay)
+            myCompOverlay.addEventListener("click",_that.attribute);
         }
 
       })
@@ -203,11 +206,12 @@ name: 'surfaceAmbient',
 
 
     // 自定义覆盖物
-    selfOverfay( point, text, tipColor ){
-        function ComplexCustomOverlay(point, text, tipColor){
+    selfOverfay( point, text, tipColor,id ){
+        function ComplexCustomOverlay(point, text, tipColor,id){
           this._point = point;
           this._text = text; 
           this._tipColor = tipColor;
+          this._id = id;
         }
         ComplexCustomOverlay.prototype = new BMap.Overlay();
         ComplexCustomOverlay.prototype.initialize = function(bMap){
@@ -228,7 +232,8 @@ name: 'surfaceAmbient',
           // 地点
           let nameText = this._span = document.createElement("span");
           div.appendChild(nameText);
-          nameText.appendChild(document.createTextNode(this._text));     
+          nameText.appendChild(document.createTextNode(this._text)); 
+          nameText.id = this._id;
           nameText.style.backgroundColor = backColor ;
           nameText.style.display = "block";
           nameText.style.border = "1px solid #ddd";
@@ -244,9 +249,23 @@ name: 'surfaceAmbient',
           this._div.style.left = pixel.x + "px";
           this._div.style.top  = pixel.y - 30 + "px";
         }
+        ComplexCustomOverlay.prototype.addEventListener = function(event,fun){
+            this._div['on'+event] = fun;
+        }
 
+        myCompOverlay = new ComplexCustomOverlay(point, text, tipColor,id)
+    },
 
-        myCompOverlay = new ComplexCustomOverlay(point, text, tipColor)
+    // 点点击事件
+    attribute(e){
+      console.log( e.target.id )
+        let p = e.target.id
+        this.$router.push({
+            path: '/ambient/thread',
+            query: {
+                id: p
+            }
+        })
     }
 
 

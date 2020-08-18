@@ -28,22 +28,21 @@
         </div>
 
         <div class="warningList" v-show="show_map_list == 'list'" >
-            <div class="warningBox" v-for="item in warningListArr"  @click="yjList.bind(item)" >
+            <div class="warningBox" v-for="item in warningListArr" v-show=" warningListArr.length > 0 "  @click="yjList(item)" >
                 <div class="imgBox">
-                    <!-- v-show=" warningListArr.length > 0 " -->
+                    <!--  -->
                     <img :src="item.icon" alt="">
                 </div>
-                <div class="warnTit">
-                    1111
+                <div class="warnTit"> 
                     {{ item.area }}{{ item.publishTime }}发布{{ item.type }}{{ item.level }}预警
                 </div>
                 <div class="warnTime">
                     {{ item.publishTime }}
                 </div> 
             </div>
-            <!-- <div v-show=" warningListArr.length <= 0 ">
-                暂无数据
-            </div> -->
+            <div class="zanwu" v-show=" warningListArr.length <= 0 ">
+                暂无数据......
+            </div>
         </div>
 
         <div class="suspension">
@@ -255,13 +254,15 @@ name: 'warning',
         } ).then( (res)=>{
             console.log( res )
             if( res.data.status == 200 ){
-                // this.warningListArr = res.data.data.content.list;
+                this.warningListArr = res.data.data.content.list;
             }
         } )
     },
 
     yjList(a){
         console.log( a )
+        this.warnDiogData = a;
+        this.warningVisible = true
     },
 
 
@@ -418,6 +419,12 @@ name: 'warning',
                     height: 50px;
                     font-size: 20px; 
                 }
+            }
+            .zanwu{
+                width: 100%;
+                height: 300px;
+                text-align: center;
+                line-height: 300px;
             }
         }
         .suspension{
