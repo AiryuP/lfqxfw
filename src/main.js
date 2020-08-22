@@ -5,6 +5,7 @@ import router from './router'
 import store from './store' 
 import axios from './http/axios.js'
 import echarts from 'echarts'
+import './assets/icon/iconfont.css'
 
 // import Swiper from 'swiper';
 import VueAwesomeSwiper from 'vue-awesome-swiper'

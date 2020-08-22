@@ -20,15 +20,16 @@
               <div style="font-size:40px;">{{ allData.api }}</div> 
               <div style="margin-top:15px;">省/市排名：<span style="color:#d0021b;"> {{ allData.order }}</span></div>
             </div>
-            <div class="aqi-color" style="background-color: rgb(66, 207, 24); width: 131.3px;"></div>
+            <div class="aqi-color" id="aqiColor" ></div>
         </div>
         <div class="aqi-other">
           <span>
             <img src="../../../assets/images/huanjin/icon-wd.png">
-            25.7℃
+            {{ allData.wendu }}
           </span> 
-          <span><img src="../../../assets/images/huanjin/icon-js.png">73%</span>
-          <span><img src="../../../assets/images/huanjin/icon-f.png" style="transform: rotate(10deg);margin:0;">&nbsp;&nbsp;10.5m/s</span>
+          <span><img src="../../../assets/images/huanjin/icon-js.png">{{ allData.shidu }}</span>
+          <span><img src="../../../assets/images/huanjin/icon-f.png" style="transform: rotate(10deg);margin:0;">&nbsp;&nbsp;
+            {{ allData.fengli }}</span>
         </div>
       </div>
       <div class="chartOne">
@@ -57,8 +58,76 @@
       </div>
 
       <div class="chartTwo">
-
+          <div class="cont-charts">
+              <div class="tongji-titles">AQI变化趋势</div>
+              <div class="radioBox">
+                    <el-radio-group v-model="radio4" size="mini" @change="radioChage">
+                        <el-radio-button label="1">小时</el-radio-button>
+                        <el-radio-button label="2">天</el-radio-button>
+                        <el-radio-button label="3">月</el-radio-button>
+                    </el-radio-group>
+              </div>
+              <div id="airChartsWarp"></div>
+          </div>
+          <div class="cont-charts">
+              <div class="tongji-titles">周边区县</div>
+              <div class="radioBox" >
+                <el-radio-group v-model="radioNear" size="mini" @change="radioChage">
+                    <el-radio-button label="5">国控点</el-radio-button>
+                    <el-radio-button label="6">省控点</el-radio-button> 
+                </el-radio-group>
+              </div>
+              <div id="nearby">
+                  <div class="gkBox" v-show="radioNear == '5'" >
+                    <el-table
+                        :data="gkTableData"
+                        :header-cell-style="{background:'#F3F4F7',color:'#555'}"
+                        style="width: 100%">
+                        <el-table-column
+                            prop="stationName"
+                            label="监测点">
+                        </el-table-column>
+                        <el-table-column
+                            prop="aqiVal"
+                            label="AQI">
+                        </el-table-column>
+                        <el-table-column
+                            prop="pm25Val"
+                            label="PM2.5">
+                        </el-table-column>
+                        <el-table-column
+                            prop="pm10Val"
+                            label="PM10">
+                        </el-table-column>
+                    </el-table>
+                  </div>
+                  <div class="skBox" v-show="radioNear == '6'">
+                    <el-table
+                        :data="skTableData"
+                        :header-cell-style="{background:'#F3F4F7',color:'#555'}"
+                        style="width: 100%">
+                        <el-table-column
+                            prop="stationName"
+                            label="监测点">
+                        </el-table-column>
+                        <el-table-column
+                            prop="aqiVal"
+                            label="AQI">
+                        </el-table-column>
+                        <el-table-column
+                            prop="pm25Val"
+                            label="PM2.5">
+                        </el-table-column>
+                        <el-table-column
+                            prop="pm10Val"
+                            label="PM10">
+                        </el-table-column>
+                    </el-table>
+                  </div>
+              </div>
+          </div>
       </div>
+ 
   </div>
 </template>
 
@@ -75,6 +144,12 @@ name: 'threadAmbient',
         order: '',
       },
       jinwenShow: false,
+      radio4: '1',
+      radioNear: '5',
+      apiArr: [],
+      gkTableData: [],
+      skTableData: []
+
     };
   },
 
@@ -87,6 +162,25 @@ name: 'threadAmbient',
   watch: {},
 
   methods: {
+
+    //   计算aqiColor
+    setColor(num){
+        let ele = document.getElementById('aqiColor');
+        let ele2 = document.getElementsByClassName('aqis')[0];
+
+        let w2 = ele2.clientWidth;
+        // let w = num/500*2000;
+        // let w = 1750/500*num;
+        let w = num/10*35
+        console.log( w )
+        let bgcolor = this.Color('aqi',num);
+        ele.style.width = w + 'px';
+        ele.style.backgroundColor = bgcolor;
+
+
+
+    },
+
     // 请求数据
     getData(){
       let api = '/api/web/huanjingDetail';
@@ -100,10 +194,38 @@ name: 'threadAmbient',
           let data = res.data.data.content;
           this.allData = data;
           console.log(  this.allData ) 
+          this.gkTableData = data.guokong;
+          this.skTableData = data.shengkong;
           let jinwen = data.jingWenData.jingwenData;
           let shidu = data.shiduData.jsonShiDu;
           this.showStabilityCharts(jinwen.arryX,jinwen.arryJW,20,30,jinwen.arryFX,jinwen.arryFL);
-          this.showHumidityCharts(shidu.arryX,shidu.arrySD,shidu.arryWD,20,30)
+          this.showHumidityCharts(shidu.arryX,shidu.arrySD,shidu.arryWD,20,30);
+          let num = data.api;
+          this.setColor( num )
+          let aqiData = data.apiData;
+
+          let arr = [];
+          let aqiDataArr1 = aqiData.apiMon.monY;
+          let aqiDataArr2 = aqiData.apiMon.monL;
+          let aqiDataArr3 = aqiData.apiMon.monQ;
+          let aqiDataArr4 = aqiData.apiMon.monZ;
+          let aqiDataArr5 = aqiData.apiMon.monZD; 
+          let aqiDataArr6 = aqiData.apiMon.monYZ; 
+          
+          arr = [aqiDataArr1,aqiDataArr2,aqiDataArr3,aqiDataArr4,aqiDataArr5,aqiDataArr6];
+            let apiMon ={};
+            apiMon.monX = aqiData.apiMon.monX;
+            apiMon.monY = arr;
+          let dataAQI = {};
+          dataAQI = {
+              'apiDay': aqiData.apiDay,
+              'apiHour':aqiData.apiHour,
+              'apiMon': apiMon
+          } 
+
+          this.apiArr = dataAQI;
+          this.getAQIdata( '1',dataAQI );
+
         }
       } )
     },
@@ -459,24 +581,21 @@ name: 'threadAmbient',
         });
     },
     // AQI变化
-    getAQIdata(){
-        switch (num) {
-            case 1:
-                label = data.aqihour.label;
-                val = data.aqihour.val;
-                start = data.start;
-                end = data.end;
-                break;
-            case 2:
-                label = data.aqiday.label;
-                val = data.aqiday.val;
-                break;
-            case 3:
-                label = data.aqimonth.label;
-                val = data.aqimonth.val;
-                break;
-        }
-        var myChart = echarts.init(document.getElementById("airChartsWarp"));
+    getAQIdata( num,data ){ 
+        let _taht = this;
+        let label,val,start = 20,end = 30;
+        if( num == '1'){
+            label = data.apiHour.hourX;
+            val = data.apiHour.hourY;
+        }else if( num == '2'){
+            label = data.apiDay.dayX;
+            val = data.apiDay.dayY;
+        }else if( num == '3' ){
+            label = data.apiMon.monX;
+            val = data.apiMon.monY;
+            console.log( val )
+        } 
+        var myChart = this.$echarts.init(document.getElementById("airChartsWarp"));
         var option = {};
         var font_size = 60;
         if (num != 3) {
@@ -599,7 +718,7 @@ name: 'threadAmbient',
                         type: 'bar',
                         name: 'AQI值',
                         barGap: 1,
-                        data: convertAirData(val)
+                        data: _taht.convertAirData(val)
                     }
                 ]
             };
@@ -617,6 +736,7 @@ name: 'threadAmbient',
                 });
             }
         } else {
+            console.log( '3333333333333333' )
             option = {
                 color: ['#43ce19', '#eedc30', '#ffaa01', '#ff401b', '#d20042', '#9b0a4d'],
                 grid: {
@@ -746,8 +866,123 @@ name: 'threadAmbient',
                     }
                 ]
             };
+            console.log( val[0] )
             myChart.setOption(option);
         }
+    },
+    convertAirData(data) {
+        let newData = [];
+        let _that = this; 
+        for (let i = 0; i < data.length; i++) {
+            newData.push({
+                value: data[i],
+                itemStyle: {normal: {color: _that.Color("aqi",parseFloat(data[i]))}}
+            })
+        }
+        return newData;
+    },
+    Color(name,num){
+        if(name == "PM2.5"){
+            if (num <= 35) {
+                return '#42cf18';
+            } else if (num <= 75) {
+                return '#efdd30';
+            } else if (num <= 115) {
+                return '#ffab00';
+            } else if (num <= 150) {
+                return '#ff401a';
+            } else if (num <= 250) {
+                return '#d30040';
+            } else {
+                return '#9b0a4c';
+            }
+        }else if(name == "PM10"){
+            if (num <= 50) {
+                return '#42cf18';
+            } else if (num <= 150) {
+                return '#efdd30';
+            } else if (num <= 250) {
+                return '#ffab00';
+            } else if (num <= 350) {
+                return '#ff401a';
+            } else if (num <= 420) {
+                return '#d30040';
+            } else {
+                return '#9b0a4c';
+            }
+        }else if(name == "SO2"){
+            if (num <= 150) {
+                return '#42cf18';
+            } else if (num <= 500) {
+                return '#efdd30';
+            } else if (num <= 650) {
+                return '#ffab00';
+            } else if (num <= 800) {
+                return '#ff401a';
+            } else{
+                return '#d30040';
+
+            }
+        }else if(name == "NO2"){
+            if (num <= 100) {
+                return '#42cf18';
+            } else if (num <= 200) {
+                return '#efdd30';
+            } else if (num <= 700) {
+                return '#ffab00';
+            } else if (num <= 1200) {
+                return '#ff401a';
+            } else if (num <= 2340) {
+                return '#d30040';
+            } else {
+                return '#9b0a4c';
+            }
+        }else if(name == "CO"){
+            if (num <= 5) {
+                return '#42cf18';
+            } else if (num <= 10) {
+                return '#efdd30';
+            } else if (num <= 35) {
+                return '#ffab00';
+            } else if (num <= 60) {
+                return '#ff401a';
+            } else if (num <= 90) {
+                return '#d30040';
+            } else {
+                return '#9b0a4c';
+            }
+        }else if(name == "O3"){
+            if (num <= 160) {
+                return '#42cf18';
+            } else if (num <= 200) {
+                return '#efdd30';
+            } else if (num <= 300) {
+                return '#ffab00';
+            } else if (num <= 400) {
+                return '#ff401a';
+            } else if (num <= 800) {
+                return '#d30040';
+            } else {
+                return '#9b0a4c';
+            }
+        }else if(name == "aqi"){
+            if (num <= 50) {
+                return '#42cf18';
+            } else if (num <= 100) {
+                return '#efdd30';
+            } else if (num <= 200) {
+                return '#ffab00';
+            } else if (num <= 300) {
+                return '#ff401a';
+            } else if (num <= 500) {
+                return '#d30040';
+            } else {
+                return '#9b0a4c';
+            }
+        }
+    },
+    radioChage(a){ 
+        this.getAQIdata(a,this.apiArr)
     }
 
 
@@ -940,7 +1175,38 @@ name: 'threadAmbient',
       display: flex;
       display: -webkit-flex;
       justify-content: space-between;
+      
+      .cont-charts{
+          width: 48%;
+          .tongji-titles{
+            background-color: #f2f2f2;
+            height: 42px;
+            line-height: 42px;
+            box-sizing: border-box;
+            padding-left: 30px;
+          }
+          .radioBox{
+              width: 142px;
+              margin: 10px auto;
+          }
+          #airChartsWarp{
+            height: 220px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            position: relative;
+          }
+          #nearby{
+              padding: 0 30px;
+              box-sizing: border-box;
+              .gkBox{
+                  width: 100%;
 
+              }
+              .skBox{
+
+              }
+          }
+      }
 
     }
 }

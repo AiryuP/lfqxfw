@@ -76,7 +76,8 @@ name: 'thread',
         });
         this.showPoints(data.list);
     },
-    showPoints(datas) {
+    showPointss(datas) {
+        let that = this;
         for (let j = 0; j < datas.length; j++) {
             (function () {
                 let point = new BMap.Point(datas[j]['long'], datas[j]['lat']);
@@ -86,14 +87,14 @@ name: 'thread',
                     infoLabelText = "<div class='roadLabel clearfix'>" + "<div class='road_icon'>" + "<img style='display:block;width:36px;height:auto;' src='http://wx.hbweather.com.cn/jy_module/jcqx/warn_icon/" + datas[j]['warn'].icon + ".png'>" + "</div>" + "</div>";
                     infoWindowText = "<div class='roadWindowBox'><div class='title'>" + datas[j]['name'] + "</div>" + "<p class='warnInfo'>" + datas[j]['warn'].articel + "<p></div>"
                 } else if (datas[j]['fuwuquforecastdayList'].length > 0) {
-                    infoLabelText = "<div class='roadCircleBox'>" + "<div class='roadCircle'>" + "<svg><use xlink:href='" + transformToCode(datas[j]['weather'][0]['icon1'], false) + "'></use></svg>" + "</div></div>";
+                    infoLabelText = "<div class='roadCircleBox'>" + "<div class='roadCircle'>" + "<svg><use xlink:href='" + that.transformToCode(datas[j]['weather'][0]['icon1'], false) + "'></use></svg>" + "</div></div>";
                     infoWindowText = "<div class='roadWindowBox'><div class='title'>" + datas[j]['name'] + "</div>" + "<table>";
                     for (let i = 0; i < datas[j]['weather'].length; i++) {
                         if (datas[j]['weather'][i]['icon1'] == datas[j]['weather'][i]['icon2']) {
-                            infoWindowText += "<tr>" + "<td class='num date'>" + datas[j]['weather'][i]['date'] + "</td>" + "<td class='icons'>" + "<svg><use xlink:href='" + transformToCode(datas[j]['weather'][i]['icon1'], false) + "'></use></svg>" + "</td>" + "<td class='texts'>" + datas[j]['weather'][i]['text1'] + "</td>" + "<td class='tmps num'>" + datas[j]['weather'][i]['temp1'] + "℃<span>~</span>" + datas[j]['weather'][i]['temp2'] + "℃</td>" + "</tr>";
+                            infoWindowText += "<tr>" + "<td class='num date'>" + datas[j]['weather'][i]['date'] + "</td>" + "<td class='icons'>" + "<svg><use xlink:href='" + that.transformToCode(datas[j]['weather'][i]['icon1'], false) + "'></use></svg>" + "</td>" + "<td class='texts'>" + datas[j]['weather'][i]['text1'] + "</td>" + "<td class='tmps num'>" + datas[j]['weather'][i]['temp1'] + "℃<span>~</span>" + datas[j]['weather'][i]['temp2'] + "℃</td>" + "</tr>";
 
                         } else {
-                            infoWindowText += "<tr>" + "<td class='num date'>" + datas[j]['weather'][i]['date'] + "</td>" + "<td class='icons'>" + "<svg><use xlink:href='" + transformToCode(datas[j]['weather'][i]['icon1'], false) + "'></use></svg>" + "<svg><use xlink:href='" + transformToCode(datas[j]['weather'][i]['icon2'], false) + "'></use></svg>" + "</td>" + "<td class='td texts'>" + datas[j]['weather'][i]['text1'] + "转" + datas[j]['weather'][i]['text2'] + "</td>" + "<td class='tmps num'>" + datas[j]['weather'][i]['temp1'] + "℃<span>~</span>" + datas[j]['weather'][i]['temp2'] + "℃</td>" + "</tr>";
+                            infoWindowText += "<tr>" + "<td class='num date'>" + datas[j]['weather'][i]['date'] + "</td>" + "<td class='icons'>" + "<svg><use xlink:href='" + that.transformToCode(datas[j]['weather'][i]['icon1'], false) + "'></use></svg>" + "<svg><use xlink:href='" + that.transformToCode(datas[j]['weather'][i]['icon2'], false) + "'></use></svg>" + "</td>" + "<td class='td texts'>" + datas[j]['weather'][i]['text1'] + "转" + datas[j]['weather'][i]['text2'] + "</td>" + "<td class='tmps num'>" + datas[j]['weather'][i]['temp1'] + "℃<span>~</span>" + datas[j]['weather'][i]['temp2'] + "℃</td>" + "</tr>";
                         }
                     }
                     infoWindowText = infoWindowText + "<table></div>";
@@ -122,7 +123,162 @@ name: 'thread',
                 });
             })();
         }
+    },
+    transformToCode(num, boolean) { //num传入的天气数字，boolean为true代表是黑夜
+        var number = parseInt(num);
+        switch (number) {
+            case 0:
+                if (boolean) {
+                    return "#icon-yeqing";
+                } else {
+                    return "#icon-riqing"
+                }
+            case 1:
+                if (boolean) {
+                    return "#icon-yejianduoyun";
+                } else {
+                    return "#icon-rijianduoyun"
+                }
+            case 2:
+                return "#icon-yin";
+            case 3:
+                return "#icon-zhenyusvg";
+            case 4:
+                return "#icon-leizhenyu";
+            case 5:
+                return "#icon-leizhenyubanyoubingbao";
+            case 6:
+                return "#icon-yujiaxue";
+            case 7:
+                return "#icon-xiaoyu";
+            case 8:
+                return "#icon-zhongyu";
+            case 9:
+                return "#icon-dayu";
+            case 10:
+                return "#icon-baoyu";
+            case 11:
+                return "#icon-dabaoyu";
+            case 12:
+                return "#icon-tedabaoyu";
+            case 13:
+                return "#icon-zhenxue";
+            case 14:
+                return "#icon-xiaoxue";
+            case 15:
+                return "#icon-zhongxue";
+            case 16:
+                return "#icon-daxue";
+            case 17:
+                return "#icon-baoxue";
+            case 18:
+                return "#icon-wu";
+            case 19:
+                return "#icon-dongyu";
+            case 20:
+                return "#icon-shachenbao";
+            case 21:
+                return "#icon-xiaodaozhongyu";
+            case 22:
+                return "#icon-zhongdaodayu";
+            case 23:
+                return "#icon-dadaobaoyu";
+            case 24:
+                return "#icon-baoyudaodabaoyu";
+            case 25:
+                return "#icon-dabaoyudaotedabaoyu";
+            case 26:
+                return "#icon-xiaodaozhongxue";
+            case 27:
+                return "#icon-zhongdaodaxue";
+            case 28:
+                return "#icon-dadaobaoxue";
+            case 29:
+                return "#icon-fuchen";
+            case 30:
+                return "#icon-yangsha";
+            case 31:
+                return "#icon-qiangshachenbao";
+            case 32:
+                return "#icon-nongwu";
+            case 33:
+                return "#icon-xiaoxue";
+            case 49:
+                return "#icon-qiangnongwu";
+            case 53:
+                return "#icon-mai";
+            case 54:
+                return "#icon-zhongdumai";
+            case 55:
+                return "#icon-zhongdumai1";
+            case 56:
+                return "#icon-yanzhongmai";
+            case 57:
+                return "#icon-dawu";
+            case 58:
+                return "#icon-teqiangnongwu";
+            case 99:
+                return "#icon-wu1";
+        }
+    },
+
+    showPoints(datas){ 
+        let _that = this; 
+
+        for( let i = 0; i<datas.length; i++ ){ 
+            let point = new BMap.Point(datas[i]['longitude'], datas[i]['latitude']);
+            let infoLabelText;
+            let infoWindowText;
+
+            infoLabelText = "<div class='roadCircleBox'>"  
+                            + "<div class='roadCircle' style='border: 1px solid orange;background-color: #60C5F1;padding: 5px;border-radius: 50%'>"
+                            + "<img style=' width: 28px;height:28px ' src='"+ datas[i]['picUrl'] +"'/>"
+                            + "</div>"
+                            + "</div>";
+
+            infoWindowText = "<div> <div class='title'>"+ datas[i]['city']  + "</div>";
+                            for( let j = 0;j< datas[i]['fuwuquforecastdayList'].length;j++ ){
+                                if( datas[i]['fuwuquforecastdayList'][j]['weathercode12'] == datas[i]['fuwuquforecastdayList'][j]['weathercode24']){
+                                   infoWindowText += "<div> <div style='display:inline-block'>" 
+                                                  + datas[i]['fuwuquforecastdayList'][j]['updatetime']
+                                }
+                            }
+                            + "<div></div>"
+                            + "</div>";
+
+            
+            let font_size = 43.3;
+            let label = new BMap.Label(infoLabelText, {
+                offset: new BMap.Size(-font_size * 0.34, -font_size * 0.82),
+                position: point
+            })
+            label.setStyle({
+                textAlign: "center",
+                padding: "0",
+                border: "none",
+                background: "transparent"
+            });
+            bMap.addOverlay(label);
+            let infoWindow = new BMap.InfoWindow(infoWindowText, {
+                enableMessage: false
+            });
+            label.addEventListener("click", function () {
+                bMap.openInfoWindow(infoWindow, point);
+            });
+
+        }
+
     }
+
+
+
+
+
+
+
+
+
+
   },
 //生命周期 - 创建完成（可以访问当前this实例）
   created() {
@@ -149,6 +305,7 @@ name: 'thread',
     padding: 15px 25px 10px;
     box-sizing: border-box;
     position: relative; 
+    // display: inline-block;
     .mapBox{
         width: 100%;  
         #bdMap{
