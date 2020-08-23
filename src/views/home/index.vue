@@ -2,7 +2,7 @@
   <div class="contentBox">
       <div class="subNav">
         <div class="subnav_con">
-            <div class="subnav_list" :title="item.namecn" :data-station='item.stationid' v-for="item in citysArr" @click="changeCitySt($event)" >{{item.namecn}}</div>
+            <div class="subnav_list" :title="item.namecn" :key="item" :data-station='item.stationid' v-for="item in citysArr" @click="changeCitySt($event)" >{{item.namecn}}</div>
             
         </div>   
       </div>
@@ -64,7 +64,7 @@
             <swiper ref="mySwiper" :options="swiperOptions">
               <swiper-slide class="swiper-item">
                 <div class="hours">
-                  <highcharts id="mychart" style="width:100%;height: 100%;background-color: rgba(0,0,0,0) " :options="chartOptionss"  ></highcharts>
+                  <highcharts id="mychart" style="width:100%;height: 100%;background-color: rgba(0,0,0,0) " ref="myHighChart" :options="chartOptions"  ></highcharts>
                 </div>
               </swiper-slide>
               <swiper-slide class="swiper-item">
@@ -75,7 +75,7 @@
                       <span>更新时间：2020-08-22 11 :00</span>
                     </div>
                     <div class="content">
-                        <div class="sevenDayList" v-for="item in weekData">
+                        <div class="sevenDayList" :key="item" v-for="item in weekData">
                           <div class="riqi">{{ item.fdate0 }}</div>
                           <div class="tian">{{ item.weekday }}</div>
                           <div class="icon">
@@ -146,7 +146,7 @@
               <div class="times">预报时间: {{lifeTime}}</div>
             </div>
             <div class="contents">
-              <div class="lifeIndexList" v-for="item in lifeIndexArr" >
+              <div class="lifeIndexList" :key="item" v-for="item in lifeIndexArr" >
                   <div class="icons">
                       <i class="icon iconfont icon-xiche" :class="item.icon" ></i>
                       <span>{{ item.indexName }}</span>
@@ -165,18 +165,23 @@
                 时间选择：
                 <el-date-picker
                   v-model="dateTime"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   type="datetime"
                   placeholder="选择日期时间">
                 </el-date-picker> 
  
-                <el-button size="small" @click="getMapData">显示</el-button>
+                <el-button size="small" style="margin-left: 10px" @click="getMapData">显示</el-button>
                      
                 <el-switch
                   v-model="switchValue"
+                  @change="changeSwitch"
+                  style="margin-left: 10px"
                   active-color="#13ce66"
                   inactive-color="#ff4949">
+                  <!--   -->
                 </el-switch>    
-                184秒刷新
+                {{countDownNum}}秒刷新
             </div>
             <div class="shichang adiv">
               时长选择：
@@ -204,7 +209,7 @@
             </div>
             <div class="tit">
                 <h2>廊坊2020年8月22日19时6分1小时降水量</h2>
-                <p>最高值出现在 <span style="color: red">廊坊宫村</span> ，为 <span style="color: red">0</span> mm，最低值出现在 <span style="color: red">廊坊大厂</span> ，为<span style="color: red">0</span>mm。</p>
+                <p>最高值出现在 <span style="color: red">{{ mapData.maxName }}</span> ，为 <span style="color: red">{{ mapData.max }}</span> mm，最低值出现在 <span style="color: red">{{ mapData.minName}}</span> ，为<span style="color: red">{{ mapData.min }}</span>mm。</p>
             </div>
             <div class="myMap">
               <div class="mao" @click="showChart = true">图表统计</div>
@@ -407,15 +412,21 @@ name: 'homes',
       todayData: {},
       videoMsg: {},
       weekData: [],
-
-
+ 
       showChart: false,
       houRadio: '1',
       cityRadio: '廊坊',
       dateTime: '',
-      switchValue: '',
+      switchValue: true,
 
-      isOn: '1', 
+      isOn: '1',
+      countDownNum: 500, 
+
+      mapData: {},
+
+
+
+
     };
   },
 
@@ -519,7 +530,7 @@ name: 'homes',
     },
 
     // 设置chart
-    setCharts( data ){
+    setChartss( data ){
  
         let arr = data.hourTime;
         let brr = data.hourTem;
@@ -620,20 +631,56 @@ name: 'homes',
         bMap.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
   
     },
+    setCharts(data){
+      let arr = data.hourTime;
+      let brr = data.hourTem;
+      let myHighChart = this.$refs.myHighChart;
+      console.log(myHighChart); 
+      myHighChart.options.xAxis.categories = arr;
+      myHighChart.options.series[0].data = brr;
 
+    },
     // 获取地图数据
-    getMapData(){
+    getMapData(){ 
       let api = '/api/web/rainMsg';
       this.$axios.get( api,{
         params:{
             hour: this.houRadio,
             city: this.cityRadio,
-            time: '2020-08-22 19:48:00',
+            time: this.dateTime,
         }
       } ).then((res)=>{
-        console.log( res )
+        console.log( res );
+        let data = res.data.data.content.list[0];
+        this.mapData = data;
+
+
+
+
+
+
       })
-    }
+    },
+
+    // 是否刷新
+    changeSwitch(a){ 
+
+    },
+
+    // 倒计时
+    countDown(){
+        setInterval(() => {
+          this.countDownNum -= 1;
+          if( this.countDownNum == 0 ){
+            this.countDownNum = 500;
+            
+            if( this.switchValue ){ 
+                this.getMapData()
+            }
+          }
+        }, 1000);
+    }, 
+    
 
 
 
@@ -653,7 +700,7 @@ name: 'homes',
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     let _that = this;
-    this.dateTime = new Date();
+    // this.dateTime = new Date();
     // alitterTimer = setInterval(() => {
     //     timerSept += 1;
     //     this.isOn = timerSept;
@@ -670,6 +717,8 @@ name: 'homes',
     this.getAllCity();
     this.getWeatherData();
     this.initMap();
+    this.countDown();
+    // this.shiyan();
 },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前

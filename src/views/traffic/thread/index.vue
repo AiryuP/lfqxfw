@@ -229,6 +229,7 @@ name: 'thread',
             let point = new BMap.Point(datas[i]['longitude'], datas[i]['latitude']);
             let infoLabelText;
             let infoWindowText;
+            let tdata = datas[i]['fuwuquforecastdayList'];
 
             infoLabelText = "<div class='roadCircleBox'>"  
                             + "<div class='roadCircle' style='border: 1px solid orange;background-color: #60C5F1;padding: 5px;border-radius: 50%'>"
@@ -237,14 +238,25 @@ name: 'thread',
                             + "</div>";
 
             infoWindowText = "<div> <div class='title'>"+ datas[i]['city']  + "</div>";
-                            for( let j = 0;j< datas[i]['fuwuquforecastdayList'].length;j++ ){
-                                if( datas[i]['fuwuquforecastdayList'][j]['weathercode12'] == datas[i]['fuwuquforecastdayList'][j]['weathercode24']){
+                            for( let j = 0;j< tdata.length;j++ ){
+                                if( tdata[j]['weathercode12'] == tdata[j]['weathercode24']){
                                    infoWindowText += "<div> <div style='display:inline-block'>" 
-                                                  + datas[i]['fuwuquforecastdayList'][j]['updatetime']
+                                                  + tdata[j]['updatetime'] + "</div>"
+                                                  + "<div style='display:inline-block;width: 60px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
+                                                  + "</div><div style='display:inline-block'>"+ tdata[j]['weathertext12']
+                                                  + "</div><div style='display:inline-block'>"+ tdata[j]['temp12'] + "~" + tdata[j]['temp24'] + "</div>"
+                                                  
+                                }else{
+                                   infoWindowText += "<div> <div style='display:inline-block'>" 
+                                                  + tdata[j]['updatetime'] + "</div>"
+                                                  + "<div style='display:inline-block;width: 60px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
+                                                  + "<img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode24'] +"'/>"
+                                                  + "</div><div style='display:inline-block'>"+ tdata[j]['weathertext12']+ "转" + tdata[j]['weathertext12']
+                                                  + "</div><div style='display:inline-block'>"+ tdata[j]['temp12'] + "~" + tdata[j]['temp24'] + "</div>"
                                 }
-                            }
-                            + "<div></div>"
-                            + "</div>";
+                            } 
+                            infoWindowText +=  "<div>当前能见度<span style='margin-left:15px;'>"+datas[i]['vis']+"</span></div>";
+                            infoWindowText +=  "</div>";
 
             
             let font_size = 43.3;
