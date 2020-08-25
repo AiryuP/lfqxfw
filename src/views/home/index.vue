@@ -72,7 +72,7 @@
                 <div class="sevenDay">
                     <div class="tit">
                       天气预报(未来七天)
-                      <span>更新时间：2020-08-22 11 :00</span>
+                      <span>更新时间：{{ lifeTime }}</span>
                     </div>
                     <div class="content">
                         <div class="sevenDayList"  v-for="item in weekData">
@@ -208,7 +208,7 @@
                 </el-radio-group>
             </div>
             <div class="tit">
-                <h2>廊坊2020年8月22日19时6分1小时降水量</h2>
+                <h2>{{cityRadio}}{{mapTime}} 1小时降水量</h2>
                 <p>最高值出现在 <span style="color: red">{{ maxName }}</span> ，为 <span style="color: red">{{ maxNum }}</span> mm，最低值出现在 <span style="color: red">{{ minName}}</span> ，为<span style="color: red">{{ minNum }}</span>mm。</p>
             </div>
             <div class="myMap">
@@ -447,6 +447,7 @@ name: 'homes',
       minNum: 0,
 
       tableData: [],
+      mapTime: ''
 
     };
   },
@@ -577,8 +578,6 @@ name: 'homes',
         this.videoMsg = data.videoMsg;
         this.videoSrc = data.videoMsg.video;
         this.weekData = data.weekData;
-
-
 
         this.setCharts( data.hourData )
 
@@ -785,7 +784,8 @@ name: 'homes',
             this.countDownNum = 500;
             
             if( this.switchValue ){ 
-                this.getMapData()
+                this.getmyDate();
+                this.getMapData();
             }
           }
         }, 1000);
@@ -820,6 +820,8 @@ name: 'homes',
         ss = "0" + ss;
       }
       let currentdate = year + seperator1 + month + seperator1 + strDate+ ' ' + hh + seperator2 + mm +seperator2 + ss;
+      let mapTime = year+'年'+month+'月'+strDate+'日'+hh+'时'+mm+'分';
+      this.mapTime = mapTime;
       this.dateTime = currentdate; 
     },
 
