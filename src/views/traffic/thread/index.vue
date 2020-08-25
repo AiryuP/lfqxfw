@@ -46,11 +46,9 @@ name: 'thread',
             canshu: this.myid
           }
         }).then( (res)=>{
-          console.log( res );
           if( res.data.status == 200 ){
             let data = res.data.data.content;
             let roadName = data.list[0].bianhaoname;
-            console.log( data ) 
             this.$store.commit('setRoadName', roadName);
             this.showmap( data )
           }
@@ -242,20 +240,20 @@ name: 'thread',
                                 if( tdata[j]['weathercode12'] == tdata[j]['weathercode24']){
                                    infoWindowText += "<div> <div style='display:inline-block'>" 
                                                   + tdata[j]['updatetime'] + "</div>"
-                                                  + "<div style='display:inline-block;width: 60px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
-                                                  + "</div><div style='display:inline-block'>"+ tdata[j]['weathertext12']
+                                                  + "<div style='display:inline-block;background-color: rgb(79, 112, 163);margin: 0 10px;width: 60px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
+                                                  + "</div><div style='display:inline-block;margin-right: 8px'>"+ tdata[j]['weathertext12']
                                                   + "</div><div style='display:inline-block'>"+ tdata[j]['temp12'] + "~" + tdata[j]['temp24'] + "</div>"
                                                   
                                 }else{
                                    infoWindowText += "<div> <div style='display:inline-block'>" 
                                                   + tdata[j]['updatetime'] + "</div>"
-                                                  + "<div style='display:inline-block;width: 60px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
+                                                  + "<div style='display:inline-block;width: 60px;background-color: rgb(79, 112, 163);margin: 0 10px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
                                                   + "<img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode24'] +"'/>"
-                                                  + "</div><div style='display:inline-block'>"+ tdata[j]['weathertext12']+ "转" + tdata[j]['weathertext12']
+                                                  + "</div><div style='display:inline-block;margin-right: 8px'>"+ tdata[j]['weathertext12']+ "转" + tdata[j]['weathertext12']
                                                   + "</div><div style='display:inline-block'>"+ tdata[j]['temp12'] + "~" + tdata[j]['temp24'] + "</div>"
                                 }
                             } 
-                            infoWindowText +=  "<div>当前能见度<span style='margin-left:15px;'>"+datas[i]['vis']+"</span></div>";
+                            // infoWindowText +=  "<div>当前能见度<span style='margin-left:15px;'>"+datas[i]['vis']+"</span></div>";
                             infoWindowText +=  "</div>";
 
             

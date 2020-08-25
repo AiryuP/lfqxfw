@@ -169,10 +169,7 @@ name: 'threadAmbient',
         let ele2 = document.getElementsByClassName('aqis')[0];
 
         let w2 = ele2.clientWidth;
-        // let w = num/500*2000;
-        // let w = 1750/500*num;
         let w = num/10*35
-        console.log( w )
         let bgcolor = this.Color('aqi',num);
         ele.style.width = w + 'px';
         ele.style.backgroundColor = bgcolor;
@@ -189,11 +186,9 @@ name: 'threadAmbient',
           stationNum: this.myid
         }
       }).then( (res)=>{
-        console.log( res )
         if(res.data.status == 200){
           let data = res.data.data.content;
           this.allData = data;
-          console.log(  this.allData ) 
           this.gkTableData = data.guokong;
           this.skTableData = data.shengkong;
           let jinwen = data.jingWenData.jingwenData;
@@ -593,7 +588,6 @@ name: 'threadAmbient',
         }else if( num == '3' ){
             label = data.apiMon.monX;
             val = data.apiMon.monY;
-            console.log( val )
         } 
         var myChart = this.$echarts.init(document.getElementById("airChartsWarp"));
         var option = {};
@@ -736,7 +730,6 @@ name: 'threadAmbient',
                 });
             }
         } else {
-            console.log( '3333333333333333' )
             option = {
                 color: ['#43ce19', '#eedc30', '#ffaa01', '#ff401b', '#d20042', '#9b0a4d'],
                 grid: {
@@ -866,7 +859,6 @@ name: 'threadAmbient',
                     }
                 ]
             };
-            console.log( val[0] )
             myChart.setOption(option);
         }
     },

@@ -193,7 +193,6 @@ components: {},
                 type: this.raderDefCity
             }
           }).then((res)=>{
-            console.log( res )
             if( res.data.status == 200){
                 this.radarArr = res.data.data.content.list; 
                 let ind = this.radarArr.length;
@@ -209,7 +208,6 @@ components: {},
       getCloudData(){
           let api = '/api/web/cloud';
           this.$axios.get(api,{ }).then((res)=>{
-            console.log( res.data.data.content.list )
             if( res.data.status == 200){
                 this.cioudArr = res.data.data.content.list; 
                 let ind = this.cioudArr.length;
@@ -218,7 +216,6 @@ components: {},
                     this.cioudArr[i].indx = iIndex/ind*100;
                 }
                 this.cloudImg = this.cioudArr[0].img;
-                console.log( this.cloudImg )
             }
           })
       },

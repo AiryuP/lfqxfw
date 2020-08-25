@@ -65,12 +65,12 @@
         :close-on-click-modal="false"
         :before-close="handleClose">
         <div class="warningTit">
-           {{ warnDiogData.area }}{{ warnDiogData.publishTime }}发布{{ warnDiogData.type }}{{ warnDiogData.level }}预警
+           {{ warnDiogData.city }}{{ warnDiogData.time }}发布{{ warnDiogData.text }}{{ warnDiogData.level }}预警
         </div>
         <div class="warningCont">
-            <div class="pubTime">发布时间：	{{ warnDiogData.publishTime }}</div>
-            <div class="">发布单位：	{{ warnDiogData.area }}</div>
-            <div>信号名称：	{{ warnDiogData.area }}{{ warnDiogData.publishTime }}发布{{ warnDiogData.type }}{{ warnDiogData.level }}预警</div>
+            <div class="pubTime">发布时间：	{{ warnDiogData.time }}</div>
+            <div class="">发布单位：	{{ warnDiogData.city }}</div>
+            <div>信号名称：	{{ warnDiogData.city }}{{ warnDiogData.time }}发布{{ warnDiogData.text }}{{ warnDiogData.level }}预警</div>
             <div>预报结论：	{{ warnDiogData.content }}</div>
         </div>
 
@@ -139,11 +139,8 @@ name: 'warning',
         ],
         warningVisible: false,
         warNum: '1',
-        warnDiogData: [],
-        warningListArr: [{
-            icon: '',
-            area: 'hhahh',
-        }]
+        warnDiogData: {},
+        warningListArr: []
 
         
         
@@ -223,10 +220,7 @@ name: 'warning',
         let marker = new BMap.Marker(point);
         bMap.addOverlay(marker);
     },
-    getAttr( a ){
-		// var p = marker.getPosition();       //获取marker的位置
-        // alert("marker的位置是" );   
-        console.log( a.target.customData )
+    getAttr( a ){ 
         this.warnDiogData = a.target.customData;
         this.warningVisible = true
     },
@@ -236,7 +230,6 @@ name: 'warning',
         this.$axios.get( api,{
             num: this.warNum
         } ).then( (res)=>{
-            console.log(res)
             let data = res.data.data.content.data; 
             let warnList = data.list
             this.provinceNum = data.sheng
@@ -252,7 +245,6 @@ name: 'warning',
         this.$axios.get( api,{
 
         } ).then( (res)=>{
-            console.log( res )
             if( res.data.status == 200 ){
                 this.warningListArr = res.data.data.content.list;
             }
@@ -260,7 +252,6 @@ name: 'warning',
     },
 
     yjList(a){
-        console.log( a )
         this.warnDiogData = a;
         this.warningVisible = true
     },

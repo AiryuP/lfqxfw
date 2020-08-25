@@ -193,7 +193,6 @@ methods: {
                 type: this.upDataType
             }
         } ).then( (res)=>{
-            console.log( res )
             if(res.data.status == 200 ){
                 let data = res.data.data.content;
                 this.imgUrl = data.url;

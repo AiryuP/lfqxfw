@@ -76,7 +76,6 @@ name: 'weatherforecast',
                 type: this.weatherType
             }
         } ).then((res)=>{
-            console.log(res )
             if(res.data.status == 200){
                 let data  = res.data.data.content.content;
                 this.contentTxt = data;

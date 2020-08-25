@@ -178,7 +178,7 @@ name: 'surfaceAmbient',
       this.$axios.get( api,{
 
       } ).then((res)=>{
-        console.log(res)
+        
       })
     },
     // 获取地图数据
@@ -188,7 +188,6 @@ name: 'surfaceAmbient',
       this.$axios.get( api,{
 
       } ).then((res)=>{
-        // console.log(res)
         let data = res.data.data.content.list;
 
         for( let i = 0;i<data.length;i++  ){
@@ -258,7 +257,6 @@ name: 'surfaceAmbient',
 
     // 点点击事件
     attribute(e){
-      console.log( e.target.id )
         let p = e.target.id
         this.$router.push({
             path: '/ambient/thread',

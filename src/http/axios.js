@@ -1,6 +1,7 @@
 import axios from 'axios' 
 axios.defaults.timeout = 10000
-axios.defaults.baseURL = 'http://192.168.1.109:8000'
+// axios.defaults.baseURL = 'http://192.168.1.109:8000'
+axios.defaults.baseURL = window.myUrl.baseURL
 
 // axios.interceptors.request.use(
 //     config => {

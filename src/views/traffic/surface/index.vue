@@ -158,7 +158,6 @@ name: 'surface',
         this.$axios.get( api,{
 
         } ).then((res)=>{
-            console.log(res)
             let data = res.data.data.content.list;
             this.njdArr = data
             

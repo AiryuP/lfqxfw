@@ -71,7 +71,6 @@ name: 'term',
                 id: id
             }
         }).then((res)=>{
-            console.log( res )
             if( res.data.status == 200){
                 let data = res.data.data.content.data;
 
@@ -92,7 +91,6 @@ name: 'term',
                 name: this.searchValue
             }
         }).then((res)=>{
-            console.log( res )
             if( res.data.status == 200 ){
                 this.isShow = false;
                 this.defaultTip = '请输入关键字搜索！'
@@ -111,7 +109,6 @@ name: 'term',
         this.$axios.get(api,{
             
         }).then((res)=>{
-            console.log( res );
             if(res.data.status == 200){
                 let data = res.data.data.content.data;
                 this.recommendArr = data

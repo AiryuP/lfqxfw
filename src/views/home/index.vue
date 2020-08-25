@@ -2,7 +2,7 @@
   <div class="contentBox">
       <div class="subNav">
         <div class="subnav_con">
-            <div class="subnav_list" :title="item.namecn" :key="item" :data-station='item.stationid' v-for="item in citysArr" @click="changeCitySt($event)" >{{item.namecn}}</div>
+            <div class="subnav_list" :title="item.namecn"  :data-station='item.stationid' v-for="item in citysArr" @click="changeCitySt($event)" >{{item.namecn}}</div>
             
         </div>   
       </div>
@@ -56,8 +56,8 @@
 
       </div>
       <div class="hd">
-          <div :class="{ 'on': isOn == '1' }" @mouseenter="toHours" >逐小时预报</div>
-          <div :class="{ 'on': isOn == '2' }" @mouseenter="toDays" >七天预报</div>
+          <div :class="{ 'on': isOn == '1' }" @mouseenter="toHours" @mouseleave="play" >逐小时预报</div>
+          <div :class="{ 'on': isOn == '2' }" @mouseenter="toDays" @mouseleave="play">七天预报</div>
       </div>
       <div class="slide">
           <div class="slideContent1">
@@ -75,7 +75,7 @@
                       <span>更新时间：2020-08-22 11 :00</span>
                     </div>
                     <div class="content">
-                        <div class="sevenDayList" :key="item" v-for="item in weekData">
+                        <div class="sevenDayList"  v-for="item in weekData">
                           <div class="riqi">{{ item.fdate0 }}</div>
                           <div class="tian">{{ item.weekday }}</div>
                           <div class="icon">
@@ -99,7 +99,7 @@
       <div class="airAvideo">
         <div class="pack">
           <div class="airBox">
-            <h2>当前空气质量【{{shaCity}}】</h2>
+            <h2>当前空气质量【廊坊】</h2>
             <span class="update_time">更新时间：N/A</span>
             <div class="pm_chart mt30"> 
                 <div class="clear-fix"> 
@@ -142,11 +142,11 @@
       <div class="lifeIndex">
           <div class="pack">
             <div class="tit">
-              <div class="teext">生活指数【{{shaCity}}】</div>
+              <div class="teext">生活指数【廊坊】</div>
               <div class="times">预报时间: {{lifeTime}}</div>
             </div>
             <div class="contents">
-              <div class="lifeIndexList" :key="item" v-for="item in lifeIndexArr" >
+              <div class="lifeIndexList"  v-for="item in lifeIndexArr" >
                   <div class="icons">
                       <i class="icon iconfont icon-xiche" :class="item.icon" ></i>
                       <span>{{ item.indexName }}</span>
@@ -209,13 +209,31 @@
             </div>
             <div class="tit">
                 <h2>廊坊2020年8月22日19时6分1小时降水量</h2>
-                <p>最高值出现在 <span style="color: red">{{ mapData.maxName }}</span> ，为 <span style="color: red">{{ mapData.max }}</span> mm，最低值出现在 <span style="color: red">{{ mapData.minName}}</span> ，为<span style="color: red">{{ mapData.min }}</span>mm。</p>
+                <p>最高值出现在 <span style="color: red">{{ maxName }}</span> ，为 <span style="color: red">{{ maxNum }}</span> mm，最低值出现在 <span style="color: red">{{ minName}}</span> ，为<span style="color: red">{{ minNum }}</span>mm。</p>
             </div>
             <div class="myMap">
               <div class="mao" @click="showChart = true">图表统计</div>
               <div class="zhezao" v-show="showChart">
                 <div class="colseit"  @click="showChart = false" >关闭</div>
-                <div class="chartContent"></div>
+                <div class="chartContent">
+                      <el-table
+                        :data="tableData"
+                        style="width: 100%">
+                        <el-table-column
+                          prop="date"
+                          type="index"
+                          label="排名" >
+                        </el-table-column>
+                        <el-table-column
+                          prop="stationname"
+                          label="城市名" >
+                        </el-table-column>
+                        <el-table-column
+                          prop="data"
+                          label="降雨量（从高到低）">
+                        </el-table-column>
+                      </el-table>
+                </div>
               </div>
               <div id="mapbox"></div>
             </div>
@@ -225,7 +243,7 @@
 </template>
 
 <script>
-var bMap,alitterTimer,timerSept=1;
+var bMap,alitterTimer,timerSept=1,myCompOverlay;
 import {Chart} from 'highcharts-vue'
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
 export default {
@@ -423,9 +441,12 @@ name: 'homes',
       countDownNum: 500, 
 
       mapData: {},
+      maxName: '加载中...',
+      maxNum: 0,
+      minName: '加载中...',
+      minNum: 0,
 
-
-
+      tableData: [],
 
     };
   },
@@ -446,12 +467,17 @@ name: 'homes',
 
   methods: {
     toHours(){
-       this.isOn = '1'
-        this.swiper.slideTo(1, 500, false)
+      this.isOn = '1'
+      this.swiper.slideTo(1, 500, false);
+      clearInterval( alitterTimer )
     },
     toDays(){
         this.isOn = '2'
         this.swiper.slideTo(2, 500, false)
+        clearInterval( alitterTimer )
+    },
+    play(){
+        this.weatherPlay();
     },
     // 获取所有城市
     getAllCity(){
@@ -482,9 +508,7 @@ name: 'homes',
           station: this.queryCity
         }
       }).then( (res)=>{
-        let data = res.data.data.content;
-        console.log( data );
-
+        let data = res.data.data.content;  
         let lifeIndexArr = data.lifeIndex.life.index;
         let arr = [];
         this.shaCity = data.lifeIndex.life.stationName;
@@ -512,6 +536,40 @@ name: 'homes',
             }
         }
         this.lifeIndexArr = arr;
+        if( arr.length == 0 ){
+            this.lifeIndexArr = [
+              {
+                icon: 'icon-wangqiu',
+                indexName: '晨练指数',
+                brf: '加载中...',
+                txt: '加载中...'
+              },
+              {
+                icon: 'icon-yifu',
+                indexName: '穿衣指数',
+                brf: '加载中...',
+                txt: '加载中...'
+              },
+              {
+                icon: 'icon-tiankong',
+                indexName: '蓝天指数',
+                brf: '加载中...',
+                txt: '加载中...'
+              },
+              {
+                icon: 'icon-xiche',
+                indexName: '洗车指数',
+                brf: '加载中...',
+                txt: '加载中...'
+              },
+              {
+                icon: 'icon-wendu',
+                indexName: '紫外线指数',
+                brf: '加载中...',
+                txt: '加载中...'
+              },
+            ]
+        }
 
         this.leftTop = data.leftTop;
         this.rightTop = data.rightTop;
@@ -615,10 +673,15 @@ name: 'homes',
         this.$set(this.chartOptions,chartOptions)
         
         // let charts =new HighCharts.chart( 'mychart', this.chartOptions );
+    }, 
+    setCharts(data){ 
+      let arr = data.hourData.hourTime;
+      let brr = data.hourData.hourTem;
+      let myHighChart = this.$refs.myHighChart; 
+      myHighChart.options.xAxis.categories = arr;
+      myHighChart.options.series[0].data = brr;
+
     },
-
-
-
     // 初始化地图
     initMap(){
         bMap = new BMap.Map("mapbox");
@@ -631,15 +694,6 @@ name: 'homes',
         bMap.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
   
     },
-    setCharts(data){
-      let arr = data.hourTime;
-      let brr = data.hourTem;
-      let myHighChart = this.$refs.myHighChart;
-      console.log(myHighChart); 
-      myHighChart.options.xAxis.categories = arr;
-      myHighChart.options.series[0].data = brr;
-
-    },
     // 获取地图数据
     getMapData(){ 
       let api = '/api/web/rainMsg';
@@ -650,16 +704,72 @@ name: 'homes',
             time: this.dateTime,
         }
       } ).then((res)=>{
-        console.log( res );
-        let data = res.data.data.content.list[0];
+        let data = res.data.data.content.list;
         this.mapData = data;
-
-
-
-
-
+        this.tableData = data;
+        this.maxName = data[0].maxName;
+        this.minName = data[0].minName;
+        this.maxNum = data[0].max;
+        this.minNum = data[0].min;
+        for( let i = 0;i<data.length;i++  ){
+            let point = new BMap.Point( data[i].Longitude,data[i].Latitude );
+            let text = data[i].stationname;
+            let num = data[i].data; 
+            this.selfOverfay(point ,text, num )
+            bMap.addOverlay(myCompOverlay)
+        }
+ 
 
       })
+    },
+
+        // 自定义覆盖物
+    selfOverfay( point, text , num ){
+        function ComplexCustomOverlay(point, text , num ){
+          this._point = point;
+          this._text = text; 
+          this._num = num; 
+        }
+        ComplexCustomOverlay.prototype = new BMap.Overlay();
+        ComplexCustomOverlay.prototype.initialize = function(bMap){
+          this._map = bMap;
+          let div = this._div = document.createElement("div");
+          // 覆盖物样式
+          div.style.position = "absolute";
+          div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat);
+          div.style.color = "#000";
+          div.style.backgroundColor = "#fff";
+          div.style.border = "1px solid red";
+          div.style.whiteSpace = "nowrap";
+          div.style.MozUserSelect = "none";
+          div.style.fontSize = "12px";
+          div.style.textAlign = 'center';
+          div.style.cursor = 'pointer';
+          div.className = 'point'; 
+ 
+          // 地点
+          let nameText = this._span = document.createElement("div");
+          let numText = this._span = document.createElement("div");
+          div.appendChild(nameText);
+          div.appendChild(numText);
+          nameText.appendChild(document.createTextNode(this._text));  
+          nameText.style.display = "block";
+          // nameText.style.border = "1px solid #ddd";
+          nameText.style.padding = 2 + "px"; 
+          numText.appendChild(document.createTextNode(this._num + 'mm'));
+          bMap.getPanes().labelPane.appendChild(div);
+          
+          return div;
+        }
+
+        ComplexCustomOverlay.prototype.draw = function(){
+          var map = this._map;
+          var pixel = map.pointToOverlayPixel(this._point);
+          this._div.style.left = pixel.x + "px";
+          this._div.style.top  = pixel.y - 30 + "px";
+        }
+
+        myCompOverlay = new ComplexCustomOverlay(point, text, num)
     },
 
     // 是否刷新
@@ -682,8 +792,54 @@ name: 'homes',
     }, 
     
 
+    // 获取当前时间
+    getmyDate() {
+      let date = new Date();
+      let seperator1 = "-";
+      let seperator2 = ":";
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let strDate = date.getDate();
+      let hh = date.getHours();
+      let mm = date.getMinutes();
+      let ss =  date.getSeconds();
+      if (month >= 1 && month <= 9) {
+      month = "0" + month;
+      }
+      if (strDate >= 0 && strDate <= 9) {
+      strDate = "0" + strDate;
+      }
 
+      if (hh >= 0 && hh <= 9) {
+        hh = "0" + hh;
+      }
+      if (mm >= 0 && mm <= 9) {
+        mm = "0" + mm;
+      }
+      if (ss >= 0 && ss <= 9) {
+        ss = "0" + ss;
+      }
+      let currentdate = year + seperator1 + month + seperator1 + strDate+ ' ' + hh + seperator2 + mm +seperator2 + ss;
+      this.dateTime = currentdate; 
+    },
 
+    // 天气轮播 
+    weatherPlay(){ 
+      let _that = this;
+      alitterTimer = setInterval(() => {
+          timerSept += 1;
+          this.isOn = timerSept;
+          if( this.isOn == 1){ 
+            _that.swiper.slideTo(1, 500, false)
+          }else if( this.isOn == 2){
+            
+            _that.swiper.slideTo(2, 500, false)
+          }
+          if(timerSept==2){
+            timerSept = 0
+          }
+      }, 5000);
+    }
 
 
 
@@ -699,26 +855,14 @@ name: 'homes',
 },
 //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-    let _that = this;
-    // this.dateTime = new Date();
-    // alitterTimer = setInterval(() => {
-    //     timerSept += 1;
-    //     this.isOn = timerSept;
-    //     if( this.isOn == 1){ 
-    //       _that.swiper.slideTo(1, 500, false)
-    //     }else if( this.isOn == 2){
-          
-    //       _that.swiper.slideTo(2, 500, false)
-    //     }
-    //     if(timerSept==2){
-    //       timerSept = 0
-    //     }
-    // }, 5000);
+    this.getmyDate();
     this.getAllCity();
     this.getWeatherData();
     this.initMap();
     this.countDown();
-    // this.shiyan();
+    this.getMapData();
+    this.weatherPlay();
+    
 },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
