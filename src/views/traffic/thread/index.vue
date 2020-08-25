@@ -240,14 +240,14 @@ name: 'thread',
                                 if( tdata[j]['weathercode12'] == tdata[j]['weathercode24']){
                                    infoWindowText += "<div> <div style='display:inline-block'>" 
                                                   + tdata[j]['updatetime'] + "</div>"
-                                                  + "<div style='display:inline-block;background-color: rgb(79, 112, 163);margin: 0 10px;width: 60px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
+                                                  + "<div style='display:inline-block;background-color: rgb(129, 189, 238);margin: 0 10px;padding: 0px 10px;width: 60px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
                                                   + "</div><div style='display:inline-block;margin-right: 8px'>"+ tdata[j]['weathertext12']
                                                   + "</div><div style='display:inline-block'>"+ tdata[j]['temp12'] + "~" + tdata[j]['temp24'] + "</div>"
                                                   
                                 }else{
                                    infoWindowText += "<div> <div style='display:inline-block'>" 
                                                   + tdata[j]['updatetime'] + "</div>"
-                                                  + "<div style='display:inline-block;width: 60px;background-color: rgb(79, 112, 163);margin: 0 10px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
+                                                  + "<div style='display:inline-block;width: 60px;background-color: rgb(129, 189, 238);margin: 0 10px;padding: 0px 10px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
                                                   + "<img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode24'] +"'/>"
                                                   + "</div><div style='display:inline-block;margin-right: 8px'>"+ tdata[j]['weathertext12']+ "转" + tdata[j]['weathertext12']
                                                   + "</div><div style='display:inline-block'>"+ tdata[j]['temp12'] + "~" + tdata[j]['temp24'] + "</div>"
@@ -335,6 +335,7 @@ name: 'thread',
         height:36px;
         background: #fff;
         border: 1px solid #ff9966;
+        // color:rgb(129, 189, 238);
         border-radius: 20px;
     }
     .roadCircleBox .roadCircle svg {

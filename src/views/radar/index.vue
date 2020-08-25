@@ -140,10 +140,16 @@ components: {},
     methods: {
       getRadar(){
         this.isActive = '1';
+        clearInterval(cloudTimer)
+        this.playStatus = '0'
+        this.switchImg = this.startImg;
       },
       getCloud(){
         this.isActive = '2';
         this.getCloudData();
+        clearInterval(radarTimer)
+        this.playStatus = '0'
+        this.switchImg = this.startImg;
       }, 
       openTips(){
         this.$alert('<p>雨、云、雪等降水粒子能够产生回波，并能较好地反应云雨区结构和变化，因此，通过气象雷达绘制的雷达图，已经成为我们对短时雷雨大风、冰雹等强对流天气进行监测预警的重要手段。</p><p> 雷达回波的强度，我们在雷达图上通过不同色谱表示。雷达回波从蓝色到紫色，降雨强度逐渐增强。<span style="color: red">一般来说，浅绿色有可能有降雨，深绿色一定有降雨，黄色红色区域的雨势往往非常大。</span>通过最近几张雷达图的动画观看，可以一目了然的看出雨带的移动和天气过程的走势，作为出行的参考。</p>', '提示', {
