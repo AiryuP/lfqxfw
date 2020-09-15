@@ -19,13 +19,6 @@
             <div class="words">
                 推荐搜索：
                 <span  v-for="item in recommendArr" :key="item.id" @click="toShowData(item.id)">{{ item.name }}</span>
-                <!-- <span>日界</span>
-                <span>空气质量指数</span>
-                <span>AQI</span>
-                <span>首要污染物</span>
-                <span>国家站</span>
-                <span>区域站</span>
-                <span>日照时数</span>  -->
             </div> 
         </div>
         <div class="result" v-if="!isShow">

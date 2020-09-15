@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 预警 -->
 <template>
 
   <div id="contentBox"> 
@@ -41,7 +41,7 @@
                 </div> 
             </div>
             <div class="zanwu" v-show=" warningListArr.length <= 0 ">
-                暂无数据......
+                暂无预警......
             </div>
         </div>
 

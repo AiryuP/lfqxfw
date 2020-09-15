@@ -13,6 +13,7 @@
                 </div>
             </div>
        </div>
+       <!-- 首页 -->
        <div class="nav">
             <div class="navBox">
                 <div class="navList" :class="{ 'active': isActive == '1' }" @click="toHome" >首页</div>
@@ -23,6 +24,7 @@
                 <div class="navList" :class="{ 'active': isActive == '6' }" @click="toWarning" >预警信息</div>
                 <div class="navList" :class="{ 'active': isActive == '7' }" @click="toTraffic">交通气象</div>
                 <div class="navList" :class="{ 'active': isActive == '8' }" @click="toTerm" >气象术语</div>
+                <div class="navList" :class="{ 'active': isActive == '9' }" @click="toSpecial" >气象专题</div>
             </div>
        </div>
        <div class="centerContent"></div>
@@ -68,6 +70,8 @@ export default {
         let str = this.$route.path;
         if( str == '/home' ){
             this.isActive = '1'
+        }else if( str =='/' ){
+            this.isActive = '1'
         }else if( str =='/weatherforecast' ){
             this.isActive = '2'
         }else if( str =='/gridpoint' ){
@@ -90,11 +94,22 @@ export default {
             this.isActive = '7'
         }else if( str == '/term' ){
             this.isActive = '8'
+        }else if( str == '/special' ){
+            this.isActive = '9'
+        }else if( str == '/special/lists' ){
+            this.isActive = '9'
+        }else if( str == '/special/content' ){
+            this.isActive = '9'
         }
     },  
     toTerm(){
         this.$router.push({
             path: '/term',
+        })
+    },
+    toSpecial(){
+        this.$router.push({
+            path: '/special',
         })
     },
     toHome(){

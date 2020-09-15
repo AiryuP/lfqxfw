@@ -168,6 +168,7 @@
                   format="yyyy-MM-dd HH:mm:ss"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   type="datetime"
+                  @change="changeTime"
                   placeholder="选择日期时间">
                 </el-date-picker> 
  
@@ -182,10 +183,14 @@
                   <!--   -->
                 </el-switch>    
                 {{countDownNum}}秒刷新
+                
+                
+                <el-button type="primary" v-show="isShowCsv" @click="downCSV">导出</el-button>
+                
             </div>
             <div class="shichang adiv">
               时长选择：
-                <el-radio-group v-model="houRadio" size="medium">
+                <el-radio-group v-model="houRadio" @change="changeTimme" size="medium">
                   <el-radio-button label="1">1小时降雨量</el-radio-button>
                   <el-radio-button label="3">3小时降雨量</el-radio-button>
                   <el-radio-button label="6">6小时降雨量</el-radio-button>
@@ -195,7 +200,7 @@
             </div>
             <div class="area adiv">
                 地区选择：
-                <el-radio-group v-model="cityRadio" size="medium">
+                <el-radio-group v-model="cityRadio" @change="changeCity" size="medium">
                   <el-radio-button label="廊坊">廊坊</el-radio-button>
                   <el-radio-button label="廊坊市区">廊坊市区</el-radio-button>
                   <el-radio-button label="三河市">三河市</el-radio-button>
@@ -208,7 +213,7 @@
                 </el-radio-group>
             </div>
             <div class="tit">
-                <h2>{{cityRadio}}{{mapTime}} 1小时降水量</h2>
+                <h2>{{cityRadio}}{{mapTime}} {{houRadio}}小时降水量</h2>
                 <p>最高值出现在 <span style="color: red">{{ maxName }}</span> ，为 <span style="color: red">{{ maxNum }}</span> mm，最低值出现在 <span style="color: red">{{ minName}}</span> ，为<span style="color: red">{{ minNum }}</span>mm。</p>
             </div>
             <div class="myMap">
@@ -447,7 +452,8 @@ name: 'homes',
       minNum: 0,
 
       tableData: [],
-      mapTime: ''
+      mapTime: '',
+      isShowCsv: true,
 
     };
   },
@@ -721,7 +727,58 @@ name: 'homes',
 
       })
     },
+    // changeCity
+    changeCity(){
+      this.getMapData();
+    },
+    changeTimme(){
+      this.getMapData();
+    },
+    changeTime( vla ){
+      this.dateTime = vla;
+      this.getMapData();
 
+      let now = new Date().getTime();
+      let end = new Date( vla ).getTime();
+
+      let time = Number(now - end);
+
+      if( time > Number(86400000)){
+          this.isShowCsv = false
+      }else{
+          this.isShowCsv = true
+      }
+
+      let date = new Date(vla);
+
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let strDate = date.getDate();
+      let hh = date.getHours();
+      let mm = date.getMinutes();
+      let ss =  date.getSeconds();
+      if (month >= 1 && month <= 9) {
+      month = "0" + month;
+      }
+      if (strDate >= 0 && strDate <= 9) {
+      strDate = "0" + strDate;
+      }
+
+      if (hh >= 0 && hh <= 9) {
+        hh = "0" + hh;
+      }
+      if (mm >= 0 && mm <= 9) {
+        mm = "0" + mm;
+      }
+      if (ss >= 0 && ss <= 9) {
+        ss = "0" + ss;
+      }
+      let mapTime = year+'年'+month+'月'+strDate+'日'+hh+'时'+mm+'分';
+      this.mapTime = mapTime;
+
+
+
+    },
         // 自定义覆盖物
     selfOverfay( point, text , num ){
         function ComplexCustomOverlay(point, text , num ){
@@ -841,6 +898,96 @@ name: 'homes',
             timerSept = 0
           }
       }, 5000);
+    },
+
+
+
+
+    data2csv(data = {},fun = function(str){return str}){ 
+        //验证并处理参数
+        if(data.heads.length != data.columns.length){
+            return {'code':false,'msg':'表头和内容字段数不符'};
+        } 
+        if(!data.remove_targets){
+            data.remove_targets = false;
+        }else{
+            data.remove_targets = true;
+        } 
+        let csv_data = data.data;
+        let heads = data.heads;
+        let columns = data.columns;
+        let spe_column = data.spe_column;
+        let remove_targets = data.remove_targets; 
+        // 构造csv内容
+        var str = "";
+        // let e = '';
+        for(var j in csv_data){
+            let e = csv_data[j];
+            for(var i in columns){
+                let c = e[columns[i]];
+                if(remove_targets){
+                    c = c.replace(/<[^>]+>/g,"")+",";
+                } 
+                if(spe_column.length>0 && spe_column.indexOf(columns[i])>-1){
+                    c = '`'+c;
+                }
+            str += c;
+            }
+        str += "\n";
+        }
+        let head_str = "";
+        for(var i in heads){
+            head_str += heads[i]+",";
+        }
+        head_str += "\n";
+        str = head_str + str;
+        return fun(str);
+    },
+
+    //生成并下载文件
+    download_file(file_name, content, o = true) {
+      if(o){
+            content = '\ufeff'+content
+      }
+      var aTag = document.createElement('a');
+      var blob = new Blob([content]);
+      aTag.download = file_name;
+      aTag.href = URL.createObjectURL(blob);
+      aTag.click();
+      URL.revokeObjectURL(blob);
+    },
+
+
+    downCSV(){
+          let _that = this;
+          let head = [
+                '城市',
+                '站点',
+                '降水量', 
+                '最高降水量站点',
+                '最高降水量',
+                '最低降水量站点',
+                '最低降水量',
+            ];
+          let column = [
+              'cityname',
+              'stationname',
+              'data', 
+              'maxName',
+              'max', 
+              'minName',
+              'min', 
+          ];
+          let num_column = [''];
+          this.data2csv({
+              'data': _that.mapData ,
+              'heads':head,
+              'columns':column,
+              'spe_column':num_column,
+              'remove_targets':true,
+          },function(content){
+              _that.download_file('rain.csv',content,true)
+          });
     }
 
 

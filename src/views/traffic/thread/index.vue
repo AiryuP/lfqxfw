@@ -61,7 +61,7 @@ name: 'thread',
         let driving = new BMap.DrivingRoute(bMap, {renderOptions: {map: bMap, autoViewport: true}});
         driving.search(p1, p2);
         driving.setMarkersSetCallback(function (pois) {
-            let myIcon = new BMap.Icon("../../../assets/images/blank.png", new BMap.Size(0, 0));
+            let myIcon = new BMap.Icon("/static/imgs/blank.png", new BMap.Size(0, 0));
             for (let i = 0; i < pois.length; i++) {
                 pois[i].marker.setIcon(myIcon);
             }
@@ -249,7 +249,7 @@ name: 'thread',
                                                   + tdata[j]['updatetime'] + "</div>"
                                                   + "<div style='display:inline-block;width: 60px;background-color: rgb(129, 189, 238);margin: 0 10px;padding: 0px 10px;height:28px'><img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode12'] +"'/>"
                                                   + "<img style=' width: 28px;height:28px ' src='"+ tdata[j]['weathercode24'] +"'/>"
-                                                  + "</div><div style='display:inline-block;margin-right: 8px'>"+ tdata[j]['weathertext12']+ "转" + tdata[j]['weathertext12']
+                                                  + "</div><div style='display:inline-block;margin-right: 8px'>"+ tdata[j]['weathertext12']+ "转" + tdata[j]['weathertext24']
                                                   + "</div><div style='display:inline-block'>"+ tdata[j]['temp12'] + "~" + tdata[j]['temp24'] + "</div>"
                                 }
                             } 

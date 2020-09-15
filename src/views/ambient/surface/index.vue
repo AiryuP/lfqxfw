@@ -4,81 +4,81 @@
       <div class="mapBox" v-show="show_map_list == 'map'">
            <div id="bdMap"></div>
       </div>
-      <div class="listBox" v-show="show_map_list == 'list'">
-          <div class="lb_content_box">
+      <div class="listBox" v-show="show_map_list == 'list'" v-loading="loading">
+          <div class="lb_content_box" >
               <div class="city_tit">定位城市</div>
-              <div class="city_data dw_city_data">
+              <div class="city_data dw_city_data" v-for="item in dingweiCity" @click="attribute2(item.stationNum)">
                   <div class="city_name">
-                      <div class="cityName">廊坊</div>
-                      <div class="cityUpdateTime">14:00更新</div>
+                      <div class="cityName">{{ item.city }}</div>
+                      <div class="cityUpdateTime">{{item.startTime}}更新</div>
                   </div>
                   <div class="alttileCont air">
                     <div class="labelTxt">空气质量指数:</div>
-                    <div class="font-big">58</div>
-                    <div class="air-color" :class="{  }" >良</div>
+                    <div class="font-big">{{ item.aqiVal }}</div>
+                    <div class="air-color":class="{ 'you': item.aqiVal <= 50,'liang': item.aqiVal>50 && item.aqiVal <= 100 ,'zhong': item.aqiVal>100 && item.aqiVal <= 150,'cha': item.aqiVal>150 && item.aqiVal <= 200,'hencha': item.aqiVal>200 && item.aqiVal <= 300,'techa': item.aqiVal>300  }" >{{ item.level }}</div>
                   </div>
                   <div class="alttileCont pm2"> 
                     <div class="labelTxt">PM2.5:</div>
-                    <div class="font-big">20</div>
-                    <div class="sm_color"></div>
+                    <div class="font-big">{{ item.pm25Val }}</div>
+                    <div class="sm_color" :class="{ 'you': item.pm25Val <= 35,'liang': item.pm25Val>35 && item.pm25Val <= 75 ,'zhong': item.pm25Val>75 && item.pm25Val <= 115,'cha': item.pm25Val>115 && item.pm25Val <= 150,'hencha': item.pm25Val>150 && item.pm25Val <= 250,'techa': item.pm25Val>250  }"></div>
                   </div>
                   <div class="alttileCont pm10">
                     <div class="labelTxt">PM10:</div>
-                    <div class="font-big">34</div>
-                    <div class="sm_color"></div>
+                    <div class="font-big">{{ item.pm10Val }}</div>
+                    <div class="sm_color" :class="{ 'you': item.pm10Val <= 50,'liang': item.pm10Val>50 && item.pm10Val <= 150 ,'zhong': item.pm10Val>150 && item.pm10Val <= 250,'cha': item.pm10Val>250 && item.pm10Val <= 350,'hencha': item.pm10Val>350 && item.pm10Val <= 420,'techa': item.pm10Val>420  }"></div>
                   </div>
                   <div class="alttileCont temp">
                     <div class="labelTxt">气温:</div>
-                    <div class="font-big">37.1</div>
-                    <div class="unit">℃</div>
+                    <div class="font-big">{{ item.tmpt }}</div>
+                    <!-- <div class="unit">℃</div> -->
                   </div>
                   <div class="alttileCont wet">
                     <div class="labelTxt">湿度:</div>
-                    <div class="font-big">34</div>
-                    <div class="unit">%</div>
+                    <div class="font-big">{{ item.humidity }}</div>
+                    <!-- <div class="unit">%</div> -->
                   </div>
                   <div class="alttileCont wind"> 
                     <div class="labelTxt">风:</div>
-                    <div class="font-big">3.7</div>
-                    <div class="unit">m/s</div>
+                    <div class="font-big">{{ item.windInstantV }}</div>
+                    <!-- <div class="unit">m/s</div> -->
                   </div>
               </div>
               
               <div class="city_tit">其他城市</div>
-              <div class="city_data dw_city_data">
+              <div class="city_data dw_city_data" v-for="item in otherCity" @click="attribute2(item.stationNum)">
                   <div class="city_name">
-                      <div class="cityName">固安党校</div>
-                      <div class="cityUpdateTime">14:00更新</div>
+                      <div class="cityName">{{ item.city }}</div>
+                      <div class="cityUpdateTime">{{item.startTime}}更新</div>
                   </div>
                   <div class="alttileCont air">
                     <div class="labelTxt">空气质量指数:</div>
-                    <div class="font-big">117</div>
-                    <div class="air-color">轻度污染</div>
+                    <div class="font-big">{{ item.aqiVal }}</div>
+                    <div class="air-color" :class="{ 'you': item.aqiVal <= 50,'liang': item.aqiVal>50 && item.aqiVal <= 100 ,'zhong': item.aqiVal>100 && item.aqiVal <= 150,'cha': item.aqiVal>150 && item.aqiVal <= 200,'hencha': item.aqiVal>200 && item.aqiVal <= 300,'techa': item.aqiVal>300  }">{{ item.level }}</div>
                   </div>
                   <div class="alttileCont pm2"> 
                     <div class="labelTxt">PM2.5:</div>
-                    <div class="font-big">20</div>
-                    <div class="sm_color"></div>
+                    <div class="font-big">{{ item.pm25Val }}</div>
+                    <div class="sm_color" :class="{ 'you': item.pm25Val <= 35,'liang': item.pm25Val>35 && item.pm25Val <= 75 ,'zhong': item.pm25Val>75 && item.pm25Val <= 115,'cha': item.pm25Val>115 && item.pm25Val <= 150,'hencha': item.pm25Val>150 && item.pm25Val <= 250,'techa': item.pm25Val>250  }"></div>
                   </div>
                   <div class="alttileCont pm10">
                     <div class="labelTxt">PM10:</div>
-                    <div class="font-big">34</div>
-                    <div class="sm_color"></div>
+                    <div class="font-big">{{ item.pm10Val }}</div>
+                    <div class="sm_color" :class="{ 'you': item.pm10Val <= 50,'liang': item.pm10Val>50 && item.pm10Val <= 150 ,'zhong': item.pm10Val>150 && item.pm10Val <= 250,'cha': item.pm10Val>250 && item.pm10Val <= 350,'hencha': item.pm10Val>350 && item.pm10Val <= 420,'techa': item.pm10Val>420  }"></div>
                   </div>
                   <div class="alttileCont temp">
                     <div class="labelTxt">气温:</div>
-                    <div class="font-big">37.1</div>
-                    <div class="unit">℃</div>
+                    <div class="font-big">{{ item.tmpt }}</div>
+                    <!-- <div class="unit">℃</div> -->
                   </div>
                   <div class="alttileCont wet">
                     <div class="labelTxt">湿度:</div>
-                    <div class="font-big">34</div>
-                    <div class="unit">%</div>
+                    <div class="font-big">{{ item.humidity }}</div>
+                    <!-- <div class="unit">%</div> -->
                   </div>
                   <div class="alttileCont wind"> 
                     <div class="labelTxt">风:</div>
-                    <div class="font-big">3.7</div>
-                    <div class="unit">m/s</div>
+                    <div class="font-big">{{ item.windInstantV }}</div>
+                    <!-- <div class="unit">m/s</div> -->
                   </div>
               </div>
           </div>
@@ -110,6 +110,9 @@ name: 'surfaceAmbient',
         lb_wit_img: '/static/warning/icon-lb-white.png',
         lb_img: '/static/warning/icon-lb-blue.png',
         show_map_list: 'map',
+        dingweiCity: [],
+        otherCity:[],
+        loading: false,
     };
   },
 
@@ -174,11 +177,28 @@ name: 'surfaceAmbient',
     },
     // 获取列表信息
     getDataList(){
+      this.loading = true;
       let api = '/api/web/huanjingList';
+      // let api = 'https://lfqx.sjztianyan.com/lfqxapi/api/web/huanjingList'
       this.$axios.get( api,{
 
       } ).then((res)=>{
-        
+        if( res.data.status == 200){
+            let data = res.data.data.content.list;
+
+            let aArr = data.filter( item => item.city == '廊坊市' );
+
+            let bArr = data.filter( item => item.city != '廊坊市' );
+
+            this.dingweiCity = aArr;
+            this.otherCity = bArr;
+
+            this.loading = false;
+
+
+
+        }
+
       })
     },
     // 获取地图数据
@@ -264,8 +284,17 @@ name: 'surfaceAmbient',
                 id: p
             }
         })
+    },
+    // 点点击事件
+    attribute2(num){
+        let p = num;
+        this.$router.push({
+            path: '/ambient/thread',
+            query: {
+                id: p
+            }
+        })
     }
-
 
 
 
@@ -350,6 +379,7 @@ name: 'surfaceAmbient',
             align-items: center;
             box-sizing: border-box;
             padding: 10px 0px;
+            font-size: 12px;
             background-color: #f5f5f5;
             &:hover{
               color: #0088ff;
@@ -392,7 +422,7 @@ name: 'surfaceAmbient',
                 .cityName{
                   height: 33px;
                   line-height: 33px;
-                  font-size: 22px;
+                  font-size: 20px;
                 }
                 .cityUpdateTime{ 
                   height: 33px;
@@ -401,16 +431,72 @@ name: 'surfaceAmbient',
                 }
             }
             .air{ 
+              
+              font-size: 16px;
               .air-color{
                 height: 19px;
                 padding: 0 25px;
                 color: #fff;
                 border-radius: 10px;    
-                background-color: rgb(239, 221, 48); 
+              }
+              .you{ 
+                background-color: #42cf18; 
+              }
+              .liang{
+                background-color: #efdd30; 
+              }
+              .zhong{
+                background-color: #ffab00; 
+              }
+              .cha{
+                background-color: #ff401a; 
+              }
+              .hencha{
+                background-color: #d30040;
+              }
+              .techa{
+                background-color: #9b0a4c;
               }
             }
-            .pm2{  
-
+            .pm2{   
+              .you{ 
+                background-color: #42cf18; 
+              }
+              .liang{
+                background-color: #efdd30; 
+              }
+              .zhong{
+                background-color: #ffab00; 
+              }
+              .cha{
+                background-color: #ff401a; 
+              }
+              .hencha{
+                background-color: #d30040;
+              }
+              .techa{
+                background-color: #9b0a4c;
+              }
+            }
+            .pm10{  
+              .you{ 
+                background-color: #42cf18; 
+              }
+              .liang{
+                background-color: #efdd30; 
+              }
+              .zhong{
+                background-color: #ffab00; 
+              }
+              .cha{
+                background-color: #ff401a; 
+              }
+              .hencha{
+                background-color: #d30040;
+              }
+              .techa{
+                background-color: #9b0a4c;
+              }
             }
         }
       }

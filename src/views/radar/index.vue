@@ -141,7 +141,7 @@ components: {},
       getRadar(){
         this.isActive = '1';
         clearInterval(cloudTimer)
-        this.playStatus = '0'
+        this.cloudPlayStatus = '0'
         this.switchImg = this.startImg;
       },
       getCloud(){
@@ -228,7 +228,7 @@ components: {},
       // 改变区域
       areaChange( a ){
           this.raderDefCity = a;
-          if( a == 'da' ){
+          if( a == 'dx' ){
               this.aarea = '北京'; 
           }else if(a == 'sjz'){
               this.aarea = '石家庄';

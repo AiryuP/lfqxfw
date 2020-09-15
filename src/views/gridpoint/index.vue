@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 格点 -->
 <template>
   <div id="contentBox"> 
     <div class="crumbs">
@@ -12,7 +12,10 @@
     </div>
     <div class="contents">
         <div class="contentLeft">
-            <div class="leftTitList" :class="{ 'active': isActive == '1' }"  >气温图</div> 
+            <div class="leftTitList" :class="{ 'active': isActive == '1' }" @click="changeEleTem"  >气温图</div> 
+            <div class="leftTitList" :class="{ 'active': isActive == '2' }" @click="changeEleWin"  >风</div> 
+            <div class="leftTitList" :class="{ 'active': isActive == '3' }" @click="changeEleTVis"  >能见度</div> 
+            <div class="leftTitList" :class="{ 'active': isActive == '4' }" @click="changeEleRhu"  >平均湿度</div> 
         </div>
         <div class="contentRight">
             <div class="rightContent" v-show="isActive == '1'" >
@@ -109,6 +112,100 @@
                     </div>
                 </div>
             </div>
+            <dir class="rightContent" v-show="isActive == '2'">
+
+                <div class="temBom">
+                    <div class="averageContent temBomCont" > 
+                        <div class="imgBox">
+                            <img :src="winimgUrl" alt="">
+                        </div>
+                        <div class="tabBox"> 
+                            <template>
+                                <el-table
+                                :data="winTableData"
+                                border
+                                :stretch='true'
+                                style="width: 100%">
+                                <el-table-column
+                                    prop="total"
+                                    label="统计项目" >
+                                </el-table-column>
+                                <el-table-column
+                                    prop="stationName"
+                                    label="站点名" >
+                                </el-table-column>
+                                <el-table-column
+                                    prop="ele"
+                                    label="数值">
+                                </el-table-column>
+                                </el-table>
+                            </template> 
+                        </div>
+                    </div>
+                </div>
+            </dir>
+            <div class="rightContent" v-show="isActive == '3'">
+                <div class="temBom">
+                    <div class="averageContent temBomCont" > 
+                        <div class="imgBox">
+                            <img :src="visimgUrl" alt="">
+                        </div>
+                        <div class="tabBox"> 
+                            <template>
+                                <el-table
+                                :data="visTableData"
+                                border
+                                :stretch='true'
+                                style="width: 100%">
+                                <el-table-column
+                                    prop="total"
+                                    label="统计项目" >
+                                </el-table-column>
+                                <el-table-column
+                                    prop="stationName"
+                                    label="站点名" >
+                                </el-table-column>
+                                <el-table-column
+                                    prop="ele"
+                                    label="数值">
+                                </el-table-column>
+                                </el-table>
+                            </template> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rightContent" v-show="isActive == '4'">
+                <div class="temBom">
+                    <div class="averageContent temBomCont" > 
+                        <div class="imgBox">
+                            <img :src="rhuimgUrl" alt="">
+                        </div>
+                        <div class="tabBox"> 
+                            <template>
+                                <el-table
+                                :data="rhuTableData"
+                                border
+                                :stretch='true'
+                                style="width: 100%">
+                                <el-table-column
+                                    prop="total"
+                                    label="统计项目" >
+                                </el-table-column>
+                                <el-table-column
+                                    prop="stationName"
+                                    label="站点名" >
+                                </el-table-column>
+                                <el-table-column
+                                    prop="ele"
+                                    label="数值">
+                                </el-table-column>
+                                </el-table>
+                            </template> 
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
@@ -163,6 +260,13 @@ components: {},
             TempTableData: [],
             upDataType: 'TempAvg',
             imgUrl: '',
+            winimgUrl: '',
+            winTableData: [],
+            visimgUrl: '',
+            visTableData: [],
+            rhuimgUrl: '',
+            rhuTableData: []
+
         };
     },
 //监听属性 类似于data概念
@@ -194,11 +298,69 @@ methods: {
             }
         } ).then( (res)=>{
             if(res.data.status == 200 ){
-                let data = res.data.data.content;
+                let data = res.data.data.content
                 this.imgUrl = data.url;
                 this.TempTableData = data.list; 
             }
         } )
+    },
+    changeEleTem(){
+        this.isActive = '1';
+        this.getData();
+    },
+    getWinData(){
+        let api = '/api/web/geDianData';
+        this.$axios.get( api,{
+            params:{
+                type: 'ExFengSu_Max'
+            }
+        } ).then( (res)=>{
+            if(res.data.status == 200 ){
+                let data = res.data.data.content;
+                this.winimgUrl = data.url;
+                this.winTableData = data.list; 
+            }
+        } )
+    },
+    changeEleWin(){
+        this.isActive = '2';
+        this.getWinData();
+    },
+    getVisData(){
+        let api = '/api/web/geDianData';
+        this.$axios.get( api,{
+            params:{
+                type: 'Visibility'
+            }
+        } ).then( (res)=>{
+            if(res.data.status == 200 ){
+                let data = res.data.data.content;
+                this.visimgUrl = data.url;
+                this.visTableData = data.list; 
+            }
+        } )
+    },
+    changeEleTVis(){
+        this.isActive = '3';
+        this.getVisData();
+    },
+    getRhuData(){
+        let api = '/api/web/geDianData';
+        this.$axios.get( api,{
+            params:{
+                type: 'ShiDu_Avg'
+            }
+        } ).then( (res)=>{
+            if(res.data.status == 200 ){
+                let data = res.data.data.content;
+                this.rhuimgUrl = data.url;
+                this.rhuTableData = data.list; 
+            }
+        } )
+    },
+    changeEleRhu(){
+        this.isActive = '4';
+        this.getRhuData();
     }
 },
 //生命周期 - 创建完成（可以访问当前this实例）

@@ -4,7 +4,10 @@
       <div class="upDataTips">
           <div class="tipsimg">
               <div class="imgBox">
-                  <img src="../../../assets/images/huanjin/icon_airtip.png" alt="">
+                  <el-tooltip class="item" effect="dark" placement="right">
+                      <div slot="content">{{ allData.firstDongWr}}<br/>{{ allData.firstWr}}</div>
+                    <img src="../../../assets/images/huanjin/icon_airtip.png" alt="">
+                  </el-tooltip>
               </div>
               <div class="imgTxt">{{ allData.time }}更新</div>
           </div>
@@ -975,7 +978,7 @@ name: 'threadAmbient',
     },
     radioChage(a){ 
         this.getAQIdata(a,this.apiArr)
-    }
+    },
 
 
   },

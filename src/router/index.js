@@ -11,7 +11,7 @@ Vue.use(VueRouter)
     component: Home,
     children:[
       {
-        path:"/home",
+        path:"/",
         name:"Homes",
         component: () => import(/* webpackChunkName: "home" */ '../views/home/index.vue')
       },
@@ -20,6 +20,29 @@ Vue.use(VueRouter)
         name:"secondary",
         component: () => import(/* webpackChunkName: "secondary" */ '../views/secondary/index.vue'),
         children:[
+          {
+            path:"/special",
+            name:"special",
+            component: () => import(/* webpackChunkName: "special" */ '../views/special/index.vue'),
+            children:[    
+              {
+                path:"/special/lists",
+                name:"lists",
+                component: () => import(/* webpackChunkName: "special" */ '../views/special/lists/index.vue')
+              },    
+              {
+                path:"/special/contentTwo",
+                name:"contentTwo",
+                component: () => import(/* webpackChunkName: "special" */ '../views/special/contentTwo/index.vue')
+              },
+              {
+                path:"/special/lists/detail",
+                name:"detail",
+                component: () => import(/* webpackChunkName: "special" */ '../views/special/lists/detail.vue')
+              }
+            ],
+            redirect: '/special/lists'
+          },
           {
             path:"/term",
             name:"term",
